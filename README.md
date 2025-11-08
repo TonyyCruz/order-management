@@ -91,31 +91,31 @@ A autorização é controlada através de anotações como:
 ```
 ---
 
-🚀 Como Executar o Projeto
+## 🚀 Como Executar o Projeto
 Pré-requisitos
 
 - Java 17+
 - Maven 3.8+
 - PostgreSQL em execução
 
-## 1️⃣ Clone o repositório
+### 1️⃣ Clone o repositório
 git clone https://github.com/seuusuario/order-management-api.git
 cd order-management-api
 
-## 2️⃣ Configure o banco de dados (Opcional)
-### Edite o arquivo src/main/resources/application.properties:
+### 2️⃣ Configure o banco de dados (Opcional)
+#### Edite o arquivo src/main/resources/application.properties:
 spring.datasource.url=jdbc:postgresql://localhost:5432/order_management
 spring.datasource.username=seu_usuario
 spring.datasource.password=sua_senha
 spring.jpa.hibernate.ddl-auto=update
 
-## 3️⃣ Compile e execute
+### 3️⃣ Compile e execute
 mvn spring-boot:run <br>
 Ou diretamente em sua IDE favorita.
 
 ---
 
-# #🧠 Decisões Técnicas
+## 🧠 Decisões Técnicas
 
 - Utilização de DTOs para isolamento entre a API e a camada de persistência.
 
