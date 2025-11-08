@@ -1,16 +1,19 @@
 package com.anthony.orderManagement.security;
 
+import com.anthony.orderManagement.entity.User;
+import com.anthony.orderManagement.exceptions.InvalidTokenException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TokenService {
   @Value("${jwt.security.token.expiration-time}")
-  private int expirationHours;
+  private Duration expirationTime;
   @Value("${jwt.security.token.issuer}")
   private String issuer;
   private final Algorithm algorithm;
@@ -22,32 +25,31 @@ public class TokenService {
   /**
    * Generate token string.
    *
-   * @param username the username
+   * @param user the user
    * @return the string
    */
-  public String generateToken(String username) {
+  public String generateToken(User user) {
     return JWT.create()
         .withIssuer(issuer)
-        .withSubject(username)
+        .withSubject(user.getUsername())
         .withExpiresAt(generateExpiration())
+        .withClaim("role", user.getRole().name())
         .sign(algorithm);
   }
 
-  /**
-   * Validate token string.
-   *
-   * @param token the token
-   * @return the string
-   */
   public String validateToken(String token) {
-    return JWT.require(algorithm)
-        .withIssuer(issuer)
-        .build()
-        .verify(token)
-        .getSubject();
+    try {
+      return JWT.require(algorithm)
+          .withIssuer(issuer)
+          .build()
+          .verify(token)
+          .getSubject();
+    } catch (JWTVerificationException e) {
+      throw new InvalidTokenException();
+    }
   }
 
   private Instant generateExpiration() {
-    return Instant.now().plus(expirationHours, ChronoUnit.HOURS);
+    return Instant.now().plus(expirationTime);
   }
 }

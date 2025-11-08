@@ -1,4 +1,17 @@
 package com.anthony.orderManagement.controler.dto;
 
-public class UserDto {
+import com.anthony.orderManagement.entity.User;
+import java.util.UUID;
+
+public record UserDto(UUID id, String username, String role, String birthDate) {
+
+  public static UserDto fromEntity(User user) {
+    return new UserDto(
+        user.getId(),
+        user.getUsername(),
+        user.getRole().name(),
+        user.getBirthDate().toString()
+    );
+  }
+
 }

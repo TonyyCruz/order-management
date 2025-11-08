@@ -1,9 +1,15 @@
 package com.anthony.orderManagement.controler;
 
+import com.anthony.orderManagement.controler.dto.UserCreateDto;
+import com.anthony.orderManagement.controler.dto.UserDto;
 import com.anthony.orderManagement.controler.dto.login.LoginRequest;
 import com.anthony.orderManagement.controler.dto.login.TokenDto;
+import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.security.TokenService;
+import com.anthony.orderManagement.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -18,12 +24,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
   private final AuthenticationManager authManager;
   private final TokenService tokenService;
+  private final UserService userService;
+
+  @PostMapping("/register")
+  public ResponseEntity<UserDto> register(@RequestBody @Valid UserCreateDto userCreateDto) {
+    User user = userService.create(userCreateDto.toEntity());
+    return ResponseEntity.status(HttpStatus.CREATED).body(UserDto.fromEntity(user));
+  }
 
   @PostMapping("/login")
   public ResponseEntity<TokenDto> login(@RequestBody LoginRequest loginRequest) {
     Authentication authentication = authManager.authenticate(loginRequest.toAuthentication());
-    String token = tokenService.generateToken(authentication.getName());
-    return ResponseEntity.ok(new TokenDto(token));
+    User user = (User) authentication.getPrincipal();
+    String token = tokenService.generateToken(user);
+    return ResponseEntity.ok(new TokenDto(token, user.getUsername(), user.getRole().name()));
   }
 
 }
