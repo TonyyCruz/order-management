@@ -43,6 +43,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+    <!-- UTILITY -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

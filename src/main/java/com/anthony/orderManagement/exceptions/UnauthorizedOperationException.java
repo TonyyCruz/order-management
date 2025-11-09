@@ -1,8 +1,8 @@
 package com.anthony.orderManagement.exceptions;
 
-import com.anthony.orderManagement.exceptions.baseExceptions.UnauthorizeException;
+import com.anthony.orderManagement.exceptions.baseExceptions.UnauthorizedException;
 
-public class UnauthorizedOperationException extends UnauthorizeException {
+public class UnauthorizedOperationException extends UnauthorizedException {
 
   public UnauthorizedOperationException() {
     super("You are not authorized to perform this operation.");
