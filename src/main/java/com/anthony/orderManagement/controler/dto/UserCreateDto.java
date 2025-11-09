@@ -3,6 +3,7 @@ package com.anthony.orderManagement.controler.dto;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.validation.password.PasswordValid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import java.time.LocalDate;
 
 public record UserCreateDto(
@@ -11,6 +12,7 @@ public record UserCreateDto(
     @PasswordValid
     String password,
     @NotBlank(message = "Birth date is required.")
+    @Past(message = "Birth date must be in the past.")
     LocalDate birthDate) {
 
   public User toEntity() {
