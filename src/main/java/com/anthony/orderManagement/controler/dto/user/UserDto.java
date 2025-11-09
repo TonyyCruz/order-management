@@ -1,4 +1,4 @@
-package com.anthony.orderManagement.controler.dto;
+package com.anthony.orderManagement.controler.dto.user;
 
 import com.anthony.orderManagement.entity.User;
 import java.util.UUID;

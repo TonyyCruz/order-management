@@ -1,7 +1,7 @@
 package com.anthony.orderManagement.controler;
 
-import com.anthony.orderManagement.controler.dto.UserCreateDto;
-import com.anthony.orderManagement.controler.dto.UserDto;
+import com.anthony.orderManagement.controler.dto.user.UserCreateDto;
+import com.anthony.orderManagement.controler.dto.user.UserDto;
 import com.anthony.orderManagement.controler.dto.login.LoginRequest;
 import com.anthony.orderManagement.controler.dto.login.TokenDto;
 import com.anthony.orderManagement.entity.User;

@@ -1,8 +1,8 @@
 package com.anthony.orderManagement.controler;
 
-import com.anthony.orderManagement.controler.dto.PasswordUpdateDto;
-import com.anthony.orderManagement.controler.dto.UserDto;
-import com.anthony.orderManagement.controler.dto.UserUpdateDto;
+import com.anthony.orderManagement.controler.dto.user.PasswordUpdateDto;
+import com.anthony.orderManagement.controler.dto.user.UserDto;
+import com.anthony.orderManagement.controler.dto.user.UserUpdateDto;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.service.UserService;
 import jakarta.validation.Valid;

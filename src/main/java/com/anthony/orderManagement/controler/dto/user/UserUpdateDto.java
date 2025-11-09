@@ -1,4 +1,4 @@
-package com.anthony.orderManagement.controler.dto;
+package com.anthony.orderManagement.controler.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
