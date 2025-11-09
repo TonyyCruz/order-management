@@ -4,7 +4,7 @@ import com.anthony.orderManagement.controler.dto.user.PasswordUpdateDto;
 import com.anthony.orderManagement.controler.dto.user.UserCreateDto;
 import com.anthony.orderManagement.controler.dto.user.UserUpdateDto;
 import com.anthony.orderManagement.entity.User;
-import com.anthony.orderManagement.enums.Role;
+import com.anthony.orderManagement.security.Role;
 import com.anthony.orderManagement.exceptions.InvalidCredentialsException;
 import com.anthony.orderManagement.exceptions.UserNotFoundException;
 import com.anthony.orderManagement.exceptions.UsernameAlreadyExistsException;

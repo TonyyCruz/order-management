@@ -1,4 +1,4 @@
-package com.anthony.orderManagement.enums;
+package com.anthony.orderManagement.security;
 
 import org.springframework.security.core.GrantedAuthority;
 

@@ -20,8 +20,8 @@ public class AdminService {
   }
 
   public void updateRole(UUID id, RoleUpdateDto roleUpdateDto, Authentication auth) {
-    User currentAdmin = (User) auth.getPrincipal();
-    if (currentAdmin.getId().equals(id)) {
+    UUID currentUserId = (UUID) auth.getDetails();
+    if (currentUserId.equals(id)) {
       throw new UnauthorizedOperationException("You cannot change your own role.");
     }
     User user = getById(id);
