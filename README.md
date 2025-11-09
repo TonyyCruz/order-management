@@ -57,8 +57,8 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 ## 🧱 Arquitetura do Projeto
 
 A arquitetura segue o modelo de **camadas** (layered architecture), com separação clara de responsabilidades:
-com.anthony.orderManagement
-│
+com.anthony.orderManagement <br>
+│ <br>
 ├── controller → Camada de entrada da aplicação (endpoints REST) <br>
 ├── service → Contém a lógica de negócio <br>
 ├── repository → Interface com o banco de dados (Spring Data JPA)<br>
