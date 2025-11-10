@@ -1,6 +1,6 @@
 package com.anthony.orderManagement.entity;
 
-import com.anthony.orderManagement.enums.Role;
+import com.anthony.orderManagement.security.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
