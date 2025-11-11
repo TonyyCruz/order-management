@@ -4,12 +4,13 @@ import com.anthony.orderManagement.controler.dto.user.PasswordUpdateDto;
 import com.anthony.orderManagement.controler.dto.user.UserCreateDto;
 import com.anthony.orderManagement.controler.dto.user.UserUpdateDto;
 import com.anthony.orderManagement.entity.User;
-import com.anthony.orderManagement.security.Role;
 import com.anthony.orderManagement.exceptions.InvalidCredentialsException;
 import com.anthony.orderManagement.exceptions.UserNotFoundException;
 import com.anthony.orderManagement.exceptions.UsernameAlreadyExistsException;
 import com.anthony.orderManagement.repository.UserRepository;
+import com.anthony.orderManagement.security.Role;
 import jakarta.transaction.Transactional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,14 +32,14 @@ public class UserService {
 
   @Transactional
   public User updateUser(UserUpdateDto updateDto, Authentication auth) {
-    User user = getUserFromAuth(auth);
-    boolean isUsernameChanged = !user.getUsername().equals(updateDto.username());
+    boolean isUsernameChanged = !auth.getName().equals(updateDto.username());
     if (isUsernameChanged && usernameExists(updateDto.username())) {
       throw new UsernameAlreadyExistsException();
     }
+    User user = userRepository.getReferenceById((UUID) auth.getDetails());
     user.setUsername(updateDto.username());
     user.setBirthDate(updateDto.birthDate());
-    return userRepository.save(user);
+    return userRepository.save(user); // Opcional com o @Transactional, mas melhora a testabilidade
   }
 
   @Transactional
@@ -48,7 +49,7 @@ public class UserService {
       throw new InvalidCredentialsException();
     }
     user.setPassword(passwordEncoder.encode(passwordUpdateDto.newPassword()));
-    return userRepository.save(user);
+    return userRepository.save(user); // Opcional com o @Transactional, mas melhora a testabilidade
   }
 
   private boolean usernameExists(String username) {

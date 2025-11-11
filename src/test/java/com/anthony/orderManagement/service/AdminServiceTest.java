@@ -9,28 +9,28 @@ import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 
 import java.util.Optional;
 import java.util.UUID;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
-
   @Mock private UserRepository userRepository;
   @Mock private Authentication auth;
   @InjectMocks private AdminService adminService;
-
   private User targetUser;
   private User adminUser;
 
   @BeforeEach
   void setup() {
-    MockitoAnnotations.openMocks(this);
     targetUser = MockUser.user();
     adminUser = MockUser.admin();
   }
