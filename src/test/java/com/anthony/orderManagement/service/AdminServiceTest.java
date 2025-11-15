@@ -8,6 +8,9 @@ import com.anthony.orderManagement.exceptions.UserNotFoundException;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -21,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
+@DisplayName("Unit test for AdminService")
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
   @Mock private UserRepository userRepository;
@@ -35,49 +40,66 @@ class AdminServiceTest {
     adminUser = MockUser.admin();
   }
 
-  @Test
-  void updateRole_ShouldUpdateUserRole_WhenValid() {
-    UUID targetId = targetUser.getId();
-    UUID adminId = adminUser.getId();
-    RoleUpdateDto dto = new RoleUpdateDto(Role.ADMIN);
-    when(userRepository.findById(targetId)).thenReturn(Optional.of(targetUser));
-    when(auth.getDetails()).thenReturn(adminId);
-    adminService.updateRole(targetId, dto, auth);
-    assertEquals(Role.ADMIN, targetUser.getRole());
-    verify(userRepository).save(targetUser);
+  @Nested
+  @DisplayName("Happy Path")
+  class AdminServiceHappyPath {
+
+    @Test
+    @DisplayName("GetById should return user when exists")
+    void getById_ShouldReturnUser_WhenExists() {
+      when(userRepository.findById(targetUser.getId())).thenReturn(Optional.of(targetUser));
+      User found = adminService.getById(targetUser.getId());
+      assertEquals(targetUser, found, "The found user should match the target user");
+      verify(userRepository, times(1)).findById(targetUser.getId());
+    }
+
+    @Test
+    @DisplayName("UpdateRole should update user role when username is valid")
+    void updateRole_ShouldUpdateUserRole_WhenUsernameIsValid() {
+      UUID targetId = targetUser.getId();
+      UUID adminId = adminUser.getId();
+      RoleUpdateDto dto = new RoleUpdateDto(Role.ADMIN);
+
+      when(userRepository.findById(targetId)).thenReturn(Optional.of(targetUser));
+      when(auth.getDetails()).thenReturn(adminId);
+
+      adminService.updateRole(targetId, dto, auth);
+
+      assertEquals(Role.ADMIN, targetUser.getRole());
+      verify(userRepository, times(1)).findById(targetId);
+      verify(userRepository, times(1)).save(targetUser);
+    }
   }
 
-  @Test
-  void updateRole_ShouldThrow_WhenUserNotFound() {
-    UUID fakeId = UUID.randomUUID();
-    when(userRepository.findById(fakeId)).thenReturn(Optional.empty());
-    when(auth.getDetails()).thenReturn(adminUser.getId());
-    RoleUpdateDto dto = new RoleUpdateDto(Role.ADMIN);
-    assertThrows(UserNotFoundException.class, () -> adminService.updateRole(fakeId, dto, auth));
-    verify(userRepository, never()).save(any());
-  }
+  @Nested
+  @DisplayName("Exception Path")
+  class AdminServiceExceptionPath {
 
-  @Test
-  void updateRole_ShouldThrow_WhenAdminTriesToChangeOwnRole() {
-    UUID adminId = adminUser.getId();
-    RoleUpdateDto dto = new RoleUpdateDto(Role.CUSTOMER);
-    when(auth.getDetails()).thenReturn(adminId);
-    assertThrows(UnauthorizedOperationException.class,
-        () -> adminService.updateRole(adminId, dto, auth));
-    verify(userRepository, never()).save(any());
-  }
+    @Test
+    void updateRole_ShouldThrowUserNotFoundException_WhenUserNotFound() {
+      UUID fakeId = UUID.randomUUID();
+      when(userRepository.findById(fakeId)).thenReturn(Optional.empty());
+      when(auth.getDetails()).thenReturn(adminUser.getId());
+      RoleUpdateDto dto = new RoleUpdateDto(Role.ADMIN);
+      assertThrows(UserNotFoundException.class, () -> adminService.updateRole(fakeId, dto, auth));
+      verify(userRepository, never()).save(any());
+    }
 
-  @Test
-  void getById_ShouldReturnUser_WhenExists() {
-    when(userRepository.findById(targetUser.getId())).thenReturn(Optional.of(targetUser));
-    User found = adminService.getById(targetUser.getId());
-    assertEquals(targetUser, found);
-  }
+    @Test
+    void updateRole_ShouldThrowUnauthorizedOperationException_WhenAdminTriesToChangeOwnRole() {
+      UUID adminId = adminUser.getId();
+      RoleUpdateDto dto = new RoleUpdateDto(Role.CUSTOMER);
+      when(auth.getDetails()).thenReturn(adminId);
+      assertThrows(UnauthorizedOperationException.class,
+          () -> adminService.updateRole(adminId, dto, auth));
+      verify(userRepository, never()).save(any());
+    }
 
-  @Test
-  void getById_ShouldThrow_WhenNotFound() {
-    UUID fakeId = UUID.randomUUID();
-    when(userRepository.findById(fakeId)).thenReturn(Optional.empty());
-    assertThrows(UserNotFoundException.class, () -> adminService.getById(fakeId));
+    @Test
+    void getById_ShouldThrowUserNotFoundException_WhenNotFound() {
+      UUID fakeId = UUID.randomUUID();
+      when(userRepository.findById(fakeId)).thenReturn(Optional.empty());
+      assertThrows(UserNotFoundException.class, () -> adminService.getById(fakeId));
+    }
   }
 }
