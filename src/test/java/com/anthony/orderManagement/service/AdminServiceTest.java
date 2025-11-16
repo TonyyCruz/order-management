@@ -76,6 +76,7 @@ class AdminServiceTest {
   class AdminServiceExceptionPath {
 
     @Test
+    @DisplayName("UpdateRole should throw UserNotFoundException when user not found")
     void updateRole_ShouldThrowUserNotFoundException_WhenUserNotFound() {
       UUID fakeId = UUID.randomUUID();
       when(userRepository.findById(fakeId)).thenReturn(Optional.empty());
@@ -86,6 +87,7 @@ class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("UpdateRole should throw UnauthorizedOperationException when admin tries to change own role")
     void updateRole_ShouldThrowUnauthorizedOperationException_WhenAdminTriesToChangeOwnRole() {
       UUID adminId = adminUser.getId();
       RoleUpdateDto dto = new RoleUpdateDto(Role.CUSTOMER);
@@ -96,6 +98,7 @@ class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("GetById should throw UserNotFoundException when user not found")
     void getById_ShouldThrowUserNotFoundException_WhenNotFound() {
       UUID fakeId = UUID.randomUUID();
       when(userRepository.findById(fakeId)).thenReturn(Optional.empty());
