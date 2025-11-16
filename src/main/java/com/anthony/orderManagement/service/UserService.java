@@ -30,7 +30,6 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  @Transactional
   public User updateUser(UserUpdateDto updateDto, Authentication auth) {
     boolean isUsernameChanged = !auth.getName().equals(updateDto.username());
     if (isUsernameChanged && usernameExists(updateDto.username())) {
@@ -42,7 +41,6 @@ public class UserService {
     return userRepository.save(user); // Opcional com o @Transactional, mas melhora a testabilidade
   }
 
-  @Transactional
   public User updatePassword(PasswordUpdateDto passwordUpdateDto, Authentication auth) {
     User user = getUserFromAuth(auth);
     if (!passwordEncoder.matches(passwordUpdateDto.currentPassword(), user.getPassword())) {

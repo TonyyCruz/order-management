@@ -5,9 +5,11 @@ import com.anthony.orderManagement.exceptions.InvalidTokenException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +43,14 @@ public class TokenService {
 
   public DecodedJWT decodeToken(String token) {
     try {
-      return JWT.require(algorithm)
+      DecodedJWT decoded = JWT.require(algorithm)
           .withIssuer(issuer)
           .build()
           .verify(token);
+      if (isInvalidSubjectOrClaims(decoded)) {
+        throw new InvalidTokenException();
+      }
+      return decoded;
     } catch (JWTVerificationException e) {
       throw new InvalidTokenException();
     }
@@ -52,5 +58,17 @@ public class TokenService {
 
   private Instant generateExpiration() {
     return Instant.now().plus(expirationTime);
+  }
+
+  private boolean isInvalidSubjectOrClaims(DecodedJWT decoded) {
+    return decoded.getSubject() == null
+        || decoded.getSubject().isBlank()
+        || isClaimNullOrBlank(decoded.getClaim("id"))
+        || isClaimNullOrBlank(decoded.getClaim("role"));
+  }
+
+  private boolean isClaimNullOrBlank(Claim claim) {
+    String value = claim.asString();
+    return value == null || value.isBlank();
   }
 }
