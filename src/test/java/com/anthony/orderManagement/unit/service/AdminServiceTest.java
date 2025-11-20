@@ -1,12 +1,13 @@
-package com.anthony.orderManagement.service;
+package com.anthony.orderManagement.unit.service;
 
 import com.anthony.orderManagement.controler.dto.RoleUpdateDto;
-import com.anthony.orderManagement.exceptions.UnauthorizedOperationException;
+import com.anthony.orderManagement.exceptions.ForbiddenOperationException;
 import com.anthony.orderManagement.helper.mocks.MockUser;
 import com.anthony.orderManagement.security.Role;
 import com.anthony.orderManagement.exceptions.UserNotFoundException;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.repository.UserRepository;
+import com.anthony.orderManagement.service.AdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -92,7 +93,7 @@ class AdminServiceTest {
       UUID adminId = adminUser.getId();
       RoleUpdateDto dto = new RoleUpdateDto(Role.CUSTOMER);
       when(auth.getDetails()).thenReturn(adminId);
-      assertThrows(UnauthorizedOperationException.class,
+      assertThrows(ForbiddenOperationException.class,
           () -> adminService.updateRole(adminId, dto, auth));
       verify(userRepository, never()).save(any());
     }

@@ -24,13 +24,24 @@ public class MockUser {
     User admin = new User();
     admin.setId(UUID.randomUUID());
     admin.setUsername("super_admin");
-    admin.setPassword("encodedAdmin");
+    admin.setPassword("loginAdmin");
     admin.setRole(Role.ADMIN);
     admin.setBirthDate(LocalDate.of(1988, 1, 10));
     return admin;
   }
 
+  public static User clone(User user) {
+    User clone = new User();
+    clone.setId(user.getId());
+    clone.setUsername(user.getUsername());
+    clone.setPassword(user.getPassword());
+    clone.setBirthDate(user.getBirthDate());
+    clone.setRole(user.getRole());
+    return user;
+  }
+
   // ========== DTOs ==========
+
   public static UserCreateDto userCreateDto() {
     return new UserCreateDto("user_one", "123456", LocalDate.of(1995, 5, 15));
   }
@@ -45,15 +56,5 @@ public class MockUser {
 
   public static PasswordUpdateDto invalidPasswordUpdateDto() {
     return new PasswordUpdateDto("wrongPassword", "newPassword");
-  }
-
-  public static User clone(User user) {
-    User clone = new User();
-    clone.setId(user.getId());
-    clone.setUsername(user.getUsername());
-    clone.setPassword(user.getPassword());
-    clone.setBirthDate(user.getBirthDate());
-    clone.setRole(user.getRole());
-    return user;
   }
 }

@@ -1,4 +1,4 @@
-package com.anthony.orderManagement.service;
+package com.anthony.orderManagement.unit.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -12,6 +12,7 @@ import com.anthony.orderManagement.exceptions.UsernameAlreadyExistsException;
 import com.anthony.orderManagement.helper.mocks.MockUser;
 import com.anthony.orderManagement.repository.UserRepository;
 import com.anthony.orderManagement.security.Role;
+import com.anthony.orderManagement.service.UserService;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;

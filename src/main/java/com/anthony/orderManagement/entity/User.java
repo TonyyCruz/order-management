@@ -39,7 +39,7 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Role role;
-  @Column(nullable = false)
+  @Column(nullable = false, name = "birth_date")
   private LocalDate birthDate;
 
   @Override

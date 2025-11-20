@@ -2,7 +2,7 @@ package com.anthony.orderManagement.service;
 
 import com.anthony.orderManagement.controler.dto.RoleUpdateDto;
 import com.anthony.orderManagement.entity.User;
-import com.anthony.orderManagement.exceptions.UnauthorizedOperationException;
+import com.anthony.orderManagement.exceptions.ForbiddenOperationException;
 import com.anthony.orderManagement.exceptions.UserNotFoundException;
 import com.anthony.orderManagement.repository.UserRepository;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public class AdminService {
   public void updateRole(UUID id, RoleUpdateDto roleUpdateDto, Authentication auth) {
     UUID currentUserId = (UUID) auth.getDetails();
     if (currentUserId.equals(id)) {
-      throw new UnauthorizedOperationException("You cannot change your own role.");
+      throw new ForbiddenOperationException("You cannot change your own role.");
     }
     User user = getById(id);
     user.setRole(roleUpdateDto.role());
