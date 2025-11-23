@@ -43,7 +43,7 @@ public class MockUser {
   // ========== DTOs ==========
 
   public static UserCreateDto userCreateDto() {
-    return new UserCreateDto("user_one", "123456", LocalDate.of(1995, 5, 15));
+    return new UserCreateDto("user_one", "UserPass123@", LocalDate.of(1995, 5, 15));
   }
 
   public static UserUpdateDto userUpdateDto() {
@@ -51,7 +51,7 @@ public class MockUser {
   }
 
   public static PasswordUpdateDto passwordUpdateDto() {
-    return new PasswordUpdateDto("123456", "newPassword");
+    return new PasswordUpdateDto("UserPass123@", "UserNewPass123");
   }
 
   public static PasswordUpdateDto invalidPasswordUpdateDto() {

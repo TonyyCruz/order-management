@@ -56,7 +56,8 @@ public class RestExceptionHandler {
   }
 
   @ExceptionHandler(AuthenticationException.class)
-  public ResponseEntity<ExceptionDetails> handleSpringAuthenticationException(AuthenticationException e,
+  public ResponseEntity<ExceptionDetails> handleSpringAuthenticationException(
+      AuthenticationException e,
       HttpServletRequest request) {
     ExceptionDetails exceptionDetails = new ExceptionDetails();
     exceptionDetails.setTitle("Unauthorized");

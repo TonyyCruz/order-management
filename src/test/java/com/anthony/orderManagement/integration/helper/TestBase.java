@@ -33,7 +33,6 @@ public class TestBase {
   @Autowired
   PasswordEncoder passwordEncoder;
   protected final String AUTH_LOGIN_URL = "/auth/login";
-  protected final String USER_URL = "/users";
   protected LoginRequest userLogin = new LoginRequest("user", "123456");
   protected LoginRequest adminLogin = new LoginRequest("admin", "loginAdmin");
 
