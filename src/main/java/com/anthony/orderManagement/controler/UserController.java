@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
   private final UserService userService;
 
+  @GetMapping("/me")
+  public ResponseEntity<UserDto> getCurrentUser(Authentication auth) {
+    User user = userService.getUserFromAuth(auth);
+    return ResponseEntity.ok(UserDto.fromEntity(user));
+  }
+
   @PutMapping("/me")
-  public ResponseEntity<UserDto> updateUser(
+  public ResponseEntity<UserDto> updateCurrentUser(
       @RequestBody @Valid UserUpdateDto updateDto,
       Authentication auth) {
     User updatedUser = userService.updateUser(updateDto, auth);
@@ -29,10 +37,16 @@ public class UserController {
   }
 
   @PutMapping("/me/password")
-  public ResponseEntity<UserDto> updateUserPassword(
+  public ResponseEntity<UserDto> updateCurrentUserPassword(
       @RequestBody @Valid PasswordUpdateDto passwordUpdateDto,
       Authentication auth) {
     User updatedUser = userService.updatePassword(passwordUpdateDto, auth);
     return ResponseEntity.ok(UserDto.fromEntity(updatedUser));
+  }
+
+  @DeleteMapping("/me")
+  public ResponseEntity<Void> deleteCurrentUser(Authentication auth) {
+    userService.deleteUserFromAuth(auth);
+    return ResponseEntity.noContent().build();
   }
 }

@@ -24,27 +24,10 @@ public class MockUser {
     User admin = new User();
     admin.setId(UUID.randomUUID());
     admin.setUsername("super_admin");
-    admin.setPassword("encodedAdmin");
+    admin.setPassword("loginAdmin");
     admin.setRole(Role.ADMIN);
     admin.setBirthDate(LocalDate.of(1988, 1, 10));
     return admin;
-  }
-
-  // ========== DTOs ==========
-  public static UserCreateDto userCreateDto() {
-    return new UserCreateDto("user_one", "123456", LocalDate.of(1995, 5, 15));
-  }
-
-  public static UserUpdateDto userUpdateDto() {
-    return new UserUpdateDto("user_two", LocalDate.of(1996, 6, 20));
-  }
-
-  public static PasswordUpdateDto passwordUpdateDto() {
-    return new PasswordUpdateDto("123456", "newPassword");
-  }
-
-  public static PasswordUpdateDto invalidPasswordUpdateDto() {
-    return new PasswordUpdateDto("wrongPassword", "newPassword");
   }
 
   public static User clone(User user) {
@@ -55,5 +38,23 @@ public class MockUser {
     clone.setBirthDate(user.getBirthDate());
     clone.setRole(user.getRole());
     return user;
+  }
+
+  // ========== DTOs ==========
+
+  public static UserCreateDto userCreateDto() {
+    return new UserCreateDto("user_one", "UserPass123@", LocalDate.of(1995, 5, 15));
+  }
+
+  public static UserUpdateDto userUpdateDto() {
+    return new UserUpdateDto("user_two", LocalDate.of(1996, 6, 20));
+  }
+
+  public static PasswordUpdateDto passwordUpdateDto() {
+    return new PasswordUpdateDto("UserPass123@", "UserNewPass123");
+  }
+
+  public static PasswordUpdateDto invalidPasswordUpdateDto() {
+    return new PasswordUpdateDto("wrongPassword", "newPassword");
   }
 }

@@ -50,12 +50,16 @@ public class UserService {
     return userRepository.save(user); // Opcional com o @Transactional, mas melhora a testabilidade
   }
 
-  private boolean usernameExists(String username) {
-    return userRepository.existsByUsername(username);
+  public User getUserFromAuth(Authentication auth) {
+    return userRepository.findById((UUID) auth.getDetails())
+        .orElseThrow(UserNotFoundException::new);
   }
 
-  private User getUserFromAuth(Authentication auth) {
-    return userRepository.findByUsername(auth.getName())
-        .orElseThrow(UserNotFoundException::new);
+  public void deleteUserFromAuth(Authentication auth) {
+    userRepository.deleteById((UUID) auth.getDetails());
+  }
+
+  private boolean usernameExists(String username) {
+    return userRepository.existsByUsername(username);
   }
 }

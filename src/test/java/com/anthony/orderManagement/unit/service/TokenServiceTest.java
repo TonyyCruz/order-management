@@ -1,4 +1,4 @@
-package com.anthony.orderManagement.service;
+package com.anthony.orderManagement.unit.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
