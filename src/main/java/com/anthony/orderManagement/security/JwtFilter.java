@@ -1,5 +1,6 @@
 package com.anthony.orderManagement.security;
 
+import com.anthony.orderManagement.exceptions.InvalidTokenException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,8 +12,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,18 +27,22 @@ public class JwtFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
+    try {
     Optional<String> token = extractToken(request);
     if (token.isPresent()) {
       DecodedJWT decodedJWT = tokenService.decodeToken(token.get());
       String username = decodedJWT.getSubject();
       UUID userId = UUID.fromString(decodedJWT.getClaim("id").asString());
-      User user = (User) userDetailsService.loadUserByUsername(username);
+      UserDetails user = userDetailsService.loadUserByUsername(username);
       var usernameAuthentication = new UsernamePasswordAuthenticationToken(
           user, null, user.getAuthorities());
       usernameAuthentication.setDetails(userId);
       SecurityContextHolder.getContext().setAuthentication(usernameAuthentication);
     }
     filterChain.doFilter(request, response);
+    } catch (Exception e) {
+      writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Token inválido");
+    }
   }
 
   /**
@@ -49,5 +55,14 @@ public class JwtFilter extends OncePerRequestFilter {
     return Optional.ofNullable(request.getHeader("Authorization"))
         .filter(header -> header.startsWith("Bearer "))
         .map(header -> header.substring(7));
+  }
+
+  private void writeErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+    if (!response.isCommitted()) { // garante que não deu flush antes
+      response.setStatus(status);
+      response.setContentType("application/json");
+      response.getWriter().write("{\"error\": \"" + message + "\"}");
+      response.getWriter().flush();
+    }
   }
 }

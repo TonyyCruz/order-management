@@ -1,14 +1,15 @@
 package com.anthony.orderManagement.exceptions.handler;
 
 import com.anthony.orderManagement.exceptions.baseExceptions.BadRequestException;
-import com.anthony.orderManagement.exceptions.baseExceptions.NotFoundException;
 import com.anthony.orderManagement.exceptions.baseExceptions.ForbiddenException;
+import com.anthony.orderManagement.exceptions.baseExceptions.NotFoundException;
+import com.anthony.orderManagement.exceptions.baseExceptions.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -55,9 +56,9 @@ public class RestExceptionHandler {
     return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
   }
 
-  @ExceptionHandler(AuthenticationException.class)
+  @ExceptionHandler({AuthenticationException.class, UnauthorizedException.class})
   public ResponseEntity<ExceptionDetails> handleSpringAuthenticationException(
-      AuthenticationException e,
+      Exception e,
       HttpServletRequest request) {
     ExceptionDetails exceptionDetails = new ExceptionDetails();
     exceptionDetails.setTitle("Unauthorized");
@@ -73,9 +74,9 @@ public class RestExceptionHandler {
   public ResponseEntity<ExceptionDetails> handleSpringForbiddenException(AccessDeniedException e,
       HttpServletRequest request) {
     ExceptionDetails exceptionDetails = new ExceptionDetails();
-    exceptionDetails.setTitle("Unauthorized");
+    exceptionDetails.setTitle("Forbidden");
     exceptionDetails.setTimestamp(Instant.now());
-    exceptionDetails.setStatus(HttpStatus.UNAUTHORIZED.value());
+    exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
     exceptionDetails.setException(e.getClass().toString());
     exceptionDetails.setPath(request.getRequestURI());
     exceptionDetails.addError("error",
