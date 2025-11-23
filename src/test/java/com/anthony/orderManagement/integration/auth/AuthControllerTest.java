@@ -3,7 +3,7 @@ package com.anthony.orderManagement.integration.auth;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.anthony.orderManagement.controler.dto.login.LoginRequest;
@@ -18,8 +18,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @Tag("integration")
 @DisplayName("Integration test for login endpoint")
@@ -46,7 +44,7 @@ class LoginIntegrationTest extends TestBase {
     String json = result.getResponse().getContentAsString();
     String token = JsonPath.read(json, "$.token");
 
-    assertNotNull(token);
+    assertNotNull(token, "Token should not be null");
 
     DecodedJWT decoded = JWT.decode(token);
 
@@ -56,10 +54,23 @@ class LoginIntegrationTest extends TestBase {
   }
 
   @Test
+  @DisplayName("Login returns 401 when username is invalid")
   void login_shouldReturn401_whenUsernameIsInvalid() throws Exception {
     String valueAsString = objectMapper.writeValueAsString(
         new LoginRequest("errorUser", "99999999"));
 
+    mockMvc.perform(post(AUTH_LOGIN_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(valueAsString))
+        .andExpect(status().isUnauthorized())
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("Login returns 401 when password is invalid")
+  void login_shouldReturn401_whenPasswordIsInvalid() throws Exception {
+    String valueAsString = objectMapper.writeValueAsString(
+        new LoginRequest(userLogin.username(), "wrongPassword"));
     mockMvc.perform(post(AUTH_LOGIN_URL)
             .contentType(MediaType.APPLICATION_JSON)
             .content(valueAsString))
