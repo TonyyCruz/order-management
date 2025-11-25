@@ -9,6 +9,7 @@ import java.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -74,13 +75,12 @@ public class RestExceptionHandler {
   public ResponseEntity<ExceptionDetails> handleSpringForbiddenException(AccessDeniedException e,
       HttpServletRequest request) {
     ExceptionDetails exceptionDetails = new ExceptionDetails();
-    exceptionDetails.setTitle("Forbidden");
+    exceptionDetails.setTitle("Unauthorized");
     exceptionDetails.setTimestamp(Instant.now());
-    exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
+    exceptionDetails.setStatus(HttpStatus.UNAUTHORIZED.value());
     exceptionDetails.setException(e.getClass().toString());
     exceptionDetails.setPath(request.getRequestURI());
-    exceptionDetails.addError("error",
-        "You do not have permission to access this resource");
+    exceptionDetails.addError("error", e.getMessage());
     return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
   }
 

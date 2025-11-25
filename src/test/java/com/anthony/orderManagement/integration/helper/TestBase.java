@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.anthony.orderManagement.controler.dto.login.LoginRequest;
+import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
@@ -50,9 +51,9 @@ public class TestBase {
     }
   }
 
-//  public User performSaveUser(User entity) {
-//    entity.setId(null);
-//    entity.setPassword(passwordEncoder.encode(entity.getPassword()));
-//    return userRepository.save(entity);
-//  }
+  public User performSaveUser(User entity) {
+    entity.setId(null);
+    entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+    return userRepository.save(entity);
+  }
 }
