@@ -16,7 +16,9 @@ import com.anthony.orderManagement.security.Role;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jayway.jsonpath.JsonPath;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,6 +40,7 @@ class AuthControllerTest extends TestBase {
   }
 
   @Nested
+  @Transactional
   @DisplayName("Happy Path")
   class AuthControllerHappyPath {
 

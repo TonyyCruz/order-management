@@ -52,15 +52,15 @@ class UserServiceTest {
     void create_shouldEncodePasswordAndSaveUser_whenUsernameIsAvailable() {
       UserCreateDto dto = MockUser.userCreateDto();
 
-      when(userRepository.existsByUsername(dto.username())).thenReturn(false);
-      when(passwordEncoder.encode(targetUser.getPassword())).thenReturn("encoded");
+      when(userRepository.existsByUsername(any(String.class))).thenReturn(false);
+      when(passwordEncoder.encode(any(String.class))).thenReturn("encoded");
       when(userRepository.save(any(User.class)))
           .thenAnswer(invocation -> invocation.getArgument(0));
 
       User created = userService.create(dto);
 
       assertEquals(Role.CUSTOMER, created.getRole(), "The default role must be CUSTOMER");
-      verify(passwordEncoder).encode(targetUser.getPassword());
+      verify(passwordEncoder).encode(dto.password());
       assertEquals("encoded", created.getPassword(), "The password must be encoded");
       assertEquals(dto.username(), created.getUsername(), "The username must be maintained");
       assertEquals(dto.birthDate(), created.getBirthDate(), "The birth date must be maintained");
@@ -118,8 +118,8 @@ class UserServiceTest {
       targetUser.setPassword("encoded");
       PasswordUpdateDto dto = MockUser.passwordUpdateDto();
 
-      when(auth.getName()).thenReturn(targetUser.getUsername());
-      when(userRepository.findByUsername(targetUser.getUsername())).thenReturn(Optional.of(targetUser));
+      when(auth.getDetails()).thenReturn(targetUser.getId());
+      when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(targetUser));
       when(passwordEncoder.matches(dto.currentPassword(), targetUser.getPassword())).thenReturn(true);
       when(passwordEncoder.encode(dto.newPassword())).thenReturn("newEncoded");
       when(userRepository.save(any(User.class)))
@@ -134,7 +134,7 @@ class UserServiceTest {
       assertSame(targetUser, updated, "Update should modify the same user instance");
       verify(passwordEncoder).matches(dto.currentPassword(), "encoded");
       verify(passwordEncoder).encode(dto.newPassword());
-      verify(userRepository, times(1)).findByUsername(targetUser.getUsername());
+      verify(userRepository, times(1)).findById(targetUser.getId());
       verify(userRepository, times(1)).save(any(User.class));
     }
   }
@@ -173,8 +173,8 @@ class UserServiceTest {
     void updatePassword_shouldThrowInvalidCredentials_whenCurrentPasswordIsWrong() {
       targetUser.setPassword("encoded");
 
-      when(auth.getName()).thenReturn(targetUser.getUsername());
-      when(userRepository.findByUsername(targetUser.getUsername()))
+      when(auth.getDetails()).thenReturn(targetUser.getId());
+      when(userRepository.findById(any(UUID.class)))
           .thenReturn(Optional.of(targetUser));
       when(passwordEncoder.matches("wrong", "encoded"))
           .thenReturn(false);
@@ -184,7 +184,7 @@ class UserServiceTest {
       assertThrows(InvalidCredentialsException.class,
           () -> userService.updatePassword(dto, auth));
       verify(userRepository, times(1))
-          .findByUsername(targetUser.getUsername());
+          .findById(targetUser.getId());
       verify(passwordEncoder, times(1))
           .matches("wrong", "encoded");
     }

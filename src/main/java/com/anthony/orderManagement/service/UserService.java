@@ -47,7 +47,7 @@ public class UserService {
       throw new InvalidCredentialsException();
     }
     user.setPassword(passwordEncoder.encode(passwordUpdateDto.newPassword()));
-    return userRepository.save(user); // Opcional com o @Transactional, mas melhora a testabilidade
+    return userRepository.save(user);
   }
 
   public User getUserFromAuth(Authentication auth) {

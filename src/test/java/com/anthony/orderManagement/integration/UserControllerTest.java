@@ -185,6 +185,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
+    @Transactional
     @DisplayName("Update Current User returns 400 when username is already taken")
     void updateCurrentUser_returns400_whenUsernameIsAlreadyTaken() throws Exception {
       User anotherUser = performSaveUser(MockUser.user());
