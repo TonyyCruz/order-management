@@ -1,9 +1,9 @@
 package com.anthony.orderManagement.integration;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,6 +14,7 @@ import com.anthony.orderManagement.controler.dto.user.UserUpdateDto;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.helper.mocks.MockUser;
 import com.anthony.orderManagement.integration.helper.TestBase;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,18 +29,19 @@ public class UserControllerTest extends TestBase {
 
   @BeforeEach
   void setUp() {
-    userToken = performLogin(userLogin.username(), userLogin.password());
+    userToken = performLogin(userLogin);
     user = userRepository.findByUsername(userLogin.username())
         .orElseThrow(() -> new IllegalStateException("User not found in test DB"));
   }
 
   @Nested
+  @Transactional
   @DisplayName("Happy Path")
   class UserControllerHappyPath {
 
     @Test
-    @DisplayName("Get Current User returns user details successfully")
-    void getCurrentUser_returnsUserDetailsSuccessfully() throws Exception {
+    @DisplayName("Get Current User returns user data successfully")
+    void getCurrentUser_returnsUserDataSuccessfully() throws Exception {
       mockMvc.perform(get(USER_URL)
               .header("Authorization", userToken))
           .andExpect(status().isOk())
@@ -50,7 +52,8 @@ public class UserControllerTest extends TestBase {
           .andDo(print());
     }
 
-    @Test@DisplayName("Update Current User updates user data successfully")
+    @Test
+    @DisplayName("Update Current User updates user data successfully")
     void updateCurrentUser_updatesUserDataSuccessfully() throws Exception {
       UserUpdateDto dto = MockUser.userUpdateDto();
       String valueAsString = objectMapper.writeValueAsString(dto);
@@ -67,7 +70,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Update Current User can update their data using the same username")
+    @DisplayName("Current User can update their data using the same username")
     void updateCurrentUser_updatesTheirDataUsingSameUsername() throws Exception {
       UserUpdateDto dto = new UserUpdateDto(user.getUsername(),
           LocalDate.parse("1800-01-01"));
@@ -115,8 +118,10 @@ public class UserControllerTest extends TestBase {
               .header("Authorization", userToken))
           .andExpect(status().isNoContent())
           .andDo(print());
-      mockMvc.perform(get(USER_URL)
-              .header("Authorization", userToken))
+      String loginAsString = objectMapper.writeValueAsString(userLogin);
+      mockMvc.perform(post(AUTH_LOGIN_URL)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(loginAsString))
           .andExpect(status().isUnauthorized())
           .andDo(print());
     }
@@ -126,5 +131,114 @@ public class UserControllerTest extends TestBase {
   @DisplayName("Exception Path")
   class UserControllerExceptionPath {
 
+    @Test
+    @DisplayName("Get Current User returns 403 when no auth token is provided")
+    void getCurrentUser_returns403_whenNoAuthTokenIsProvided() throws Exception {
+      mockMvc.perform(get(USER_URL))
+          .andExpect(status().isForbidden())
+          .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Update Current User returns 403 when no auth token is provided")
+    void updateCurrentUser_returns403_whenNoAuthTokenIsProvided() throws Exception {
+      UserUpdateDto dto = MockUser.userUpdateDto();
+      String valueAsString = objectMapper.writeValueAsString(dto);
+      mockMvc.perform(put(USER_URL)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(valueAsString))
+          .andExpect(status().isForbidden())
+          .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Update Password returns 403 when no auth token is provided")
+    void updatePassword_returns403_whenNoAuthTokenIsProvided() throws Exception {
+      PasswordUpdateDto dto = new PasswordUpdateDto("oldPass", "newPass");
+      String valueAsString = objectMapper.writeValueAsString(dto);
+      mockMvc.perform(put(USER_URL + "/password")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(valueAsString))
+          .andExpect(status().isForbidden())
+          .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Delete Current User returns 403 when no auth token is provided")
+    void deleteCurrentUser_returns403_whenNoAuthTokenIsProvided() throws Exception {
+      mockMvc.perform(delete(USER_URL))
+          .andExpect(status().isForbidden())
+          .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Update Password returns 400 when current password is incorrect")
+    void updatePassword_returns400_whenCurrentPasswordIsIncorrect() throws Exception {
+      PasswordUpdateDto dto = new PasswordUpdateDto("WrongP@ssw0rd!", "NewP@ssw0rd!");
+      String valueAsString = objectMapper.writeValueAsString(dto);
+      mockMvc.perform(put(USER_URL + "/password")
+              .header("Authorization", userToken)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(valueAsString))
+          .andExpect(status().isBadRequest())
+          .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Update Current User returns 400 when username is already taken")
+    void updateCurrentUser_returns400_whenUsernameIsAlreadyTaken() throws Exception {
+      User anotherUser = performSaveUser(MockUser.user());
+      UserUpdateDto dto = new UserUpdateDto(anotherUser.getUsername(),
+          LocalDate.parse("1900-01-01"));
+      String valueAsString = objectMapper.writeValueAsString(dto);
+      mockMvc.perform(put(USER_URL)
+              .header("Authorization", userToken)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(valueAsString))
+          .andExpect(status().isBadRequest())
+          .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Update Current User returns 400 when invalid data is provided")
+    void updateCurrentUser_returns400_whenInvalidDataIsProvided() throws Exception {
+      UserUpdateDto dto = new UserUpdateDto("", null);
+      String valueAsString = objectMapper.writeValueAsString(dto);
+      mockMvc.perform(put(USER_URL)
+              .header("Authorization", userToken)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(valueAsString))
+          .andExpect(status().isBadRequest())
+          .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Update Password returns 400 when invalid data is provided")
+    void updatePassword_returns400_whenInvalidDataIsProvided() throws Exception {
+      String[] wrongPass = {"short1#", "alllowercase1!", "ALLUPPERCASE1!", "NoNumbers!",
+          "NoSpecialChar1"};
+      for (String pwd : wrongPass) {
+        PasswordUpdateDto dto = new PasswordUpdateDto(
+            userLogin.password(),
+            pwd
+        );
+        String valueAsString = objectMapper.writeValueAsString(dto);
+        mockMvc.perform(put(USER_URL)
+                .header("Authorization", userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andDo(print());
+      }
+    }
+
+    @Test
+    @DisplayName("Delete Current User returns 401 when auth token is invalid")
+    void deleteCurrentUser_returns401_whenAuthTokenIsInvalid() throws Exception {
+      mockMvc.perform(delete(USER_URL)
+              .header("Authorization", "Bearer InvalidToken"))
+          .andExpect(status().isUnauthorized())
+          .andDo(print());
+    }
   }
 }
