@@ -32,7 +32,7 @@ class AuthControllerTest extends TestBase {
   private User user;
 
   @BeforeEach
-  protected void setUp() {
+  void setUp() {
     user = userRepository.findByUsername(userLogin.username())
         .orElseThrow(() -> new IllegalStateException("User not found in test DB"));
   }

@@ -1,16 +1,15 @@
 package com.anthony.orderManagement.integration;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.anthony.orderManagement.controler.dto.login.LoginRequest;
 import com.anthony.orderManagement.controler.dto.user.PasswordUpdateDto;
-import com.anthony.orderManagement.controler.dto.user.UserCreateDto;
 import com.anthony.orderManagement.controler.dto.user.UserUpdateDto;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.helper.mocks.MockUser;
@@ -30,7 +29,7 @@ public class UserControllerTest extends TestBase {
 
   @BeforeEach
   void setUp() {
-    userToken = performLogin(userLogin.username(), userLogin.password());
+    userToken = performLogin(userLogin);
     user = userRepository.findByUsername(userLogin.username())
         .orElseThrow(() -> new IllegalStateException("User not found in test DB"));
   }

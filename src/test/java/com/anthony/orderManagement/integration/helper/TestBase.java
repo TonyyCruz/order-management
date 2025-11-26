@@ -35,9 +35,9 @@ public class TestBase {
   protected LoginRequest userLogin = new LoginRequest("user", "123456");
   protected LoginRequest adminLogin = new LoginRequest("admin", "loginAdmin");
 
-  public String performLogin(String username, String password) {
+  public String performLogin(LoginRequest loginRequest) {
     try {
-      String valueAsString = objectMapper.writeValueAsString(new LoginRequest(username, password));
+      String valueAsString = objectMapper.writeValueAsString(loginRequest);
       MvcResult mvcResult = mockMvc.perform(post(AUTH_LOGIN_URL)
               .contentType(MediaType.APPLICATION_JSON)
               .content(valueAsString))
@@ -47,7 +47,7 @@ public class TestBase {
       JSONObject json = new JSONObject(contentAsString);
       return "Bearer " + json.getString("token");
     } catch (Exception e) {
-      throw new RuntimeException("Fail in perform login on test " + username, e);
+      throw new RuntimeException("Fail in perform login on test " + loginRequest.username(), e);
     }
   }
 
