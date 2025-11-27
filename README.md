@@ -151,6 +151,8 @@ Ou diretamente em sua IDE favorita.
 
 `GET /orders`           # CUSTOMER (somente seus pedidos)
 
+`GET /orders/{ID}`      # ADMIN / CUSTOMER (somente seus pedidos)
+
 `GET /orders/all`       # ADMIN
 
 
