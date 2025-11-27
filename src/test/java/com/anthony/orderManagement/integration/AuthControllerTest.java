@@ -85,8 +85,8 @@ class AuthControllerTest extends TestBase {
   class AuthControllerExceptionPath {
 
     @Test
-    @DisplayName("Login returns 401 when username is invalid")
-    void login_shouldReturn401_whenUsernameIsInvalid() throws Exception {
+    @DisplayName("Login returns 401 when username not matching any user")
+    void login_shouldReturn401_whenUsernameNotMatchAnyUser() throws Exception {
       String valueAsString = objectMapper.writeValueAsString(
           new LoginRequest("invalid", userLogin.password()));
       mockMvc.perform(post(AUTH_LOGIN_URL)
@@ -97,8 +97,8 @@ class AuthControllerTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Login returns 401 when password is invalid")
-    void login_shouldReturn401_whenPasswordIsInvalid() throws Exception {
+    @DisplayName("Login returns 401 when password not matching")
+    void login_shouldReturn401_whenPasswordNotMatching() throws Exception {
       String valueAsString = objectMapper.writeValueAsString(
           new LoginRequest(userLogin.username(), "wrongPassword"));
       mockMvc.perform(post(AUTH_LOGIN_URL)
@@ -128,10 +128,10 @@ class AuthControllerTest extends TestBase {
     @Test
     @DisplayName("Register returns 400 when username is invalid")
     void register_shouldReturn400_whenUsernameIsInvalid() throws Exception {
-      String[] wrongUsernames = {"", "   "};
+      String[] wrongUsernames = {"", "   ", null};
       for (String username : wrongUsernames) {
         UserCreateDto dto = new UserCreateDto(
-            "  ",
+            username,
             MockUser.userCreateDto().password(),
             MockUser.userCreateDto().birthDate()
         );
@@ -147,11 +147,14 @@ class AuthControllerTest extends TestBase {
     @Test
     @DisplayName("Register returns 400 when birthdate is invalid")
     void register_shouldReturn400_whenBirthdateIsInvalid() throws Exception {
-      LocalDate[] wrongDates = {
-          LocalDate.now().plusDays(1),
+      LocalDate[] invalidDates = {
+          null,
+          LocalDate.now().plusYears(10),
+          LocalDate.now().minusYears(200),
+          LocalDate.now().minusYears(17),
           LocalDate.now()
       };
-      for (LocalDate date : wrongDates) {
+      for (LocalDate date : invalidDates) {
         UserCreateDto dto = new UserCreateDto(
             MockUser.userCreateDto().username(),
             MockUser.userCreateDto().password(),

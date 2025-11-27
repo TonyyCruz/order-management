@@ -1,4 +1,4 @@
-package com.anthony.orderManagement.validation.password;
+package com.anthony.orderManagement.validation.user;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
