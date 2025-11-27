@@ -1,6 +1,6 @@
 package com.anthony.orderManagement.service;
 
-import com.anthony.orderManagement.controler.dto.RoleUpdateDto;
+import com.anthony.orderManagement.controler.dto.admin.RoleUpdateDto;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.exceptions.ForbiddenOperationException;
 import com.anthony.orderManagement.exceptions.UserNotFoundException;

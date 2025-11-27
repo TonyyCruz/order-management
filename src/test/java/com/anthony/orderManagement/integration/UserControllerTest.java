@@ -16,6 +16,7 @@ import com.anthony.orderManagement.helper.mocks.MockUser;
 import com.anthony.orderManagement.integration.helper.TestBase;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -73,7 +74,7 @@ public class UserControllerTest extends TestBase {
     @DisplayName("Current User can update their data using the same username")
     void updateCurrentUser_updatesTheirDataUsingSameUsername() throws Exception {
       UserUpdateDto dto = new UserUpdateDto(user.getUsername(),
-          LocalDate.parse("1800-01-01"));
+          LocalDate.parse("1982-01-01"));
       String valueAsString = objectMapper.writeValueAsString(dto);
       mockMvc.perform(put(USER_URL)
               .header("Authorization", userToken)
@@ -185,6 +186,7 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
+    @Transactional
     @DisplayName("Update Current User returns 400 when username is already taken")
     void updateCurrentUser_returns400_whenUsernameIsAlreadyTaken() throws Exception {
       User anotherUser = performSaveUser(MockUser.user());
@@ -200,20 +202,45 @@ public class UserControllerTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Update Current User returns 400 when invalid data is provided")
-    void updateCurrentUser_returns400_whenInvalidDataIsProvided() throws Exception {
-      UserUpdateDto dto = new UserUpdateDto("", null);
-      String valueAsString = objectMapper.writeValueAsString(dto);
-      mockMvc.perform(put(USER_URL)
-              .header("Authorization", userToken)
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(valueAsString))
-          .andExpect(status().isBadRequest())
-          .andDo(print());
+    @DisplayName("Update Current User returns 400 when username is invalid")
+    void updateCurrentUser_returns400_whenUsernameIsInvalid() throws Exception {
+      String[] wrongUsername = {"", "   ", null};
+      for (String usrName : wrongUsername) {
+        UserUpdateDto dto = new UserUpdateDto(usrName, MockUser.user().getBirthDate());
+        String valueAsString = objectMapper.writeValueAsString(dto);
+        mockMvc.perform(put(USER_URL)
+                .header("Authorization", userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andDo(print());
+      }
     }
 
     @Test
-    @DisplayName("Update Password returns 400 when invalid data is provided")
+    @DisplayName("Update Current User returns 400 when birthdate is invalid")
+    void updateCurrentUser_returns400_whenBirthdateIsInvalid() throws Exception {
+      LocalDate[] invalidDates = {
+          null,
+          LocalDate.now().plusYears(10),
+          LocalDate.now().minusYears(200),
+          LocalDate.now().minusYears(17),
+          LocalDate.now()
+      };
+      for (LocalDate date : invalidDates) {
+        UserUpdateDto dto = new UserUpdateDto(MockUser.user().getUsername(), date);
+        String valueAsString = objectMapper.writeValueAsString(dto);
+        mockMvc.perform(put(USER_URL)
+                .header("Authorization", userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andDo(print());
+      }
+    }
+
+    @Test
+    @DisplayName("Update Password returns 400 when it have not meet complexity requirements")
     void updatePassword_returns400_whenInvalidDataIsProvided() throws Exception {
       String[] wrongPass = {"short1#", "alllowercase1!", "ALLUPPERCASE1!", "NoNumbers!",
           "NoSpecialChar1"};

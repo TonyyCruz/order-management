@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.anthony.orderManagement.controler.dto.RoleUpdateDto;
+import com.anthony.orderManagement.controler.dto.admin.RoleUpdateDto;
 import com.anthony.orderManagement.entity.User;
 import com.anthony.orderManagement.integration.helper.TestBase;
 import com.anthony.orderManagement.security.Role;

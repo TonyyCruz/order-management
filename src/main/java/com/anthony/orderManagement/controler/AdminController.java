@@ -1,6 +1,6 @@
 package com.anthony.orderManagement.controler;
 
-import com.anthony.orderManagement.controler.dto.RoleUpdateDto;
+import com.anthony.orderManagement.controler.dto.admin.RoleUpdateDto;
 import com.anthony.orderManagement.service.AdminService;
 import jakarta.validation.Valid;
 import java.util.UUID;

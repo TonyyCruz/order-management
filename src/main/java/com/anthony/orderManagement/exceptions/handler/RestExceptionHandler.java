@@ -6,6 +6,7 @@ import com.anthony.orderManagement.exceptions.baseExceptions.NotFoundException;
 import com.anthony.orderManagement.exceptions.baseExceptions.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,8 +32,8 @@ public class RestExceptionHandler {
     return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
   }
 
-  @ExceptionHandler(BadRequestException.class)
-  public ResponseEntity<ExceptionDetails> handleBadRequestException(BadRequestException e,
+  @ExceptionHandler({BadRequestException.class, DataAccessException.class})
+  public ResponseEntity<ExceptionDetails> handleBadRequestException(Exception e,
       HttpServletRequest request) {
     ExceptionDetails exceptionDetails = new ExceptionDetails();
     exceptionDetails.setTitle("Bad request");

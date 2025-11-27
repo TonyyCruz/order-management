@@ -1,6 +1,6 @@
 package com.anthony.orderManagement.unit.service;
 
-import com.anthony.orderManagement.controler.dto.RoleUpdateDto;
+import com.anthony.orderManagement.controler.dto.admin.RoleUpdateDto;
 import com.anthony.orderManagement.exceptions.ForbiddenOperationException;
 import com.anthony.orderManagement.helper.mocks.MockUser;
 import com.anthony.orderManagement.security.Role;
