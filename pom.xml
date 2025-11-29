@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.anthony</groupId>
-	<artifactId>orderManagement</artifactId>
+	<artifactId>blacksmithOnlineStore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Order Management API</name>
+	<name>Blacksmith Online Store API</name>
 	<description>Project for Spring Boot</description>
 	<url/>
 	<licenses>

@@ -2,7 +2,7 @@
 
 ## 📖 Sobre o Projeto
 
-A **Order Management API** é uma aplicação desenvolvida em **Java com Spring Boot** que tem como objetivo gerenciar o fluxo de pedidos, produtos e usuários em um sistema de e-commerce.
+A **Blacksmith's Online Store API** é uma aplicação desenvolvida em **Java com Spring Boot** que tem como objetivo gerenciar o fluxo de pedidos, produtos e usuários em um sistema de e-commerce com tema medieval.
 
 O projeto foi construído com foco em **boas práticas de arquitetura**, **segurança com JWT**, e **organização de código**, seguindo padrões utilizados em empresas para vagas **pleno backend Java/Spring**.
 
@@ -15,7 +15,7 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 ### 👤 Autenticação e Autorização
 - Implementação de **Spring Security** com **JWT (Auth0 Java JWT)**.
 - Controle de acesso baseado em **roles** (`ADMIN` e `CUSTOMER`).
-- Apenas `ADMIN` pode gerenciar produtos e visualizar todos os pedidos.
+- Apenas `ADMIN` pode gerenciar produtos, ferreiros e visualizar todos os pedidos.
 - Usuários `CUSTOMER` podem criar e visualizar apenas seus próprios pedidos.
 - Criptografia de senhas com **BCryptPasswordEncoder**.
 
@@ -25,9 +25,9 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 - Validação de idade mínima (18 anos).
 - Conversão entre **entidade** e **DTOs** para manter o encapsulamento dos dados.
 
-### 📦 Produtos (`Product`)
+### 📦 Armas (`Weapon`)
 - Cadastro, atualização e exclusão de produtos (somente `ADMIN`).
-- Campos: `id`, `name`, `price`, `stockQuantity`.
+- Campos: `id`, `name`, `type`, `rarity`, `material`, `baseDamage`, `weight`, `description`, `price`, `stockQuantity`, `craftedBy`.
 - Regras de negócio simples de controle de estoque.
 
 ### 🧾 Pedidos (`Order`)
@@ -57,7 +57,7 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 ## 🧱 Arquitetura do Projeto
 
 A arquitetura segue o modelo de **camadas** (layered architecture), com separação clara de responsabilidades:
-com.anthony.orderManagement <br>
+com.anthony.blacksmithOnlineStore <br>
 │ <br>
 ├── controller → Camada de entrada da aplicação (endpoints REST) <br>
 ├── service → Contém a lógica de negócio <br>
@@ -119,7 +119,7 @@ Ou diretamente em sua IDE favorita.
 
 - Utilização de DTOs para isolamento entre a API e a camada de persistência.
 
-- Métodos estáticos fromEntity() e toEntity() para conversões claras e centralizadas.
+- Métodos fromEntity() e toEntity() para conversões claras e centralizadas.
 
 - Enum Role implementando GrantedAuthority, garantindo integração limpa com o Spring Security.
 
@@ -137,14 +137,14 @@ Ou diretamente em sua IDE favorita.
 
 `POST /auth/login`
 
-### Produtos
-`GET /products`
+### Armas
+`GET /weapons`
 
-`POST /products`        # ADMIN
+`POST /weapons`        # ADMIN
 
-`PUT /products/{id}`    # ADMIN
+`PUT /weapons/{id}`    # ADMIN
 
-`DELETE /products/{id}` # ADMIN
+`DELETE /weapons/{id}` # ADMIN
 
 ### Pedidos
 `POST /orders`          # CUSTOMER
@@ -153,4 +153,7 @@ Ou diretamente em sua IDE favorita.
 
 `GET /orders/all`       # ADMIN
 
+### Avaliação
+- `POST /api/avaliacoes` → Avaliar arma
+- `GET /api/armas/{id}/avaliacoes` → Listar avaliações de uma arma
 
