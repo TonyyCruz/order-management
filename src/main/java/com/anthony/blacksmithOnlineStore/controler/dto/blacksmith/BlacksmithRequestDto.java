@@ -2,7 +2,7 @@ package com.anthony.blacksmithOnlineStore.controler.dto.blacksmith;
 
 import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
 
-public record BlacksmithCreateDto(String name, String description) {
+public record BlacksmithRequestDto(String name, String description) {
 
   public Blacksmith toEntity() {
     Blacksmith blacksmith = new Blacksmith();
