@@ -1,4 +1,4 @@
-package com.anthony.blacksmithOnlineStore.security;
+package com.anthony.blacksmithOnlineStore.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 
