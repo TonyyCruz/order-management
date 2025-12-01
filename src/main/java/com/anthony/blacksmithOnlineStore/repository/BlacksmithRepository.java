@@ -1,4 +1,8 @@
 package com.anthony.blacksmithOnlineStore.repository;
 
-public class BlacksmithRepository {
+import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BlacksmithRepository extends JpaRepository<Blacksmith, Long> {
+
 }

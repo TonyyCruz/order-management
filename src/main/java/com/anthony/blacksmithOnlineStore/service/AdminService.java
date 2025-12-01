@@ -28,4 +28,8 @@ public class AdminService {
     user.setRole(roleUpdateDto.role());
     userRepository.save(user);
   }
+
+  public User findByUsername(String username) {
+    return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+  }
 }

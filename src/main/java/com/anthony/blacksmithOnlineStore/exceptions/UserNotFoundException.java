@@ -4,6 +4,6 @@ import com.anthony.blacksmithOnlineStore.exceptions.baseExceptions.NotFoundExcep
 
 public class UserNotFoundException extends NotFoundException {
   public UserNotFoundException() {
-    super("User not found exception.");
+    super("User not found");
   }
 }

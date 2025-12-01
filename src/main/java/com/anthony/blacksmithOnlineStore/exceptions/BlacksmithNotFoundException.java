@@ -2,8 +2,8 @@ package com.anthony.blacksmithOnlineStore.exceptions;
 
 import com.anthony.blacksmithOnlineStore.exceptions.baseExceptions.NotFoundException;
 
-public class UserNotFoundException extends NotFoundException {
-  public UserNotFoundException() {
-    super("User not found exception.");
+public class BlacksmithNotFoundException extends NotFoundException {
+  public BlacksmithNotFoundException() {
+    super("Blacksmith not found");
   }
 }
