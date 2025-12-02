@@ -2,7 +2,7 @@
 
 ## 📖 Sobre o Projeto
 
-A **Blacksmith's Online Store API** é uma aplicação desenvolvida em **Java com Spring Boot** que tem como objetivo gerenciar o fluxo de pedidos, produtos e usuários em um sistema de e-commerce com tema medieval.
+A **Blacksmith's Online Store API** é uma aplicação desenvolvida em **Java com Spring Boot** cujo objetivo é gerenciar o fluxo de pedidos, produtos e usuarios em um sistema de e-commerce com tema medieval.
 
 O projeto foi construído com foco em **boas práticas de arquitetura**, **segurança com JWT**, e **organização de código**, seguindo padrões utilizados em empresas para vagas **pleno backend Java/Spring**.
 
@@ -16,25 +16,33 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 - Implementação de **Spring Security** com **JWT (Auth0 Java JWT)**.
 - Controle de acesso baseado em **roles** (`ADMIN` e `CUSTOMER`).
 - Apenas `ADMIN` pode gerenciar produtos, ferreiros e visualizar todos os pedidos.
-- Usuários `CUSTOMER` podem criar e visualizar apenas seus próprios pedidos.
+- Usuarios `CUSTOMER` podem criar e visualizar apenas seus próprios pedidos.
 - Criptografia de senhas com **BCryptPasswordEncoder**.
 
 ### 🧍 Usuários (`User`)
-- Cadastro e autenticação de usuários.
-- Campos: `id`, `username`, `password`, `role`, `birthDate`.
+- Cadastro e autenticação de usuarios.
+- Username único.
 - Validação de idade mínima (18 anos).
-- Conversão entre **entidade** e **DTOs** para manter o encapsulamento dos dados.
+- Senha deve possuir os caracteres obrigatorios.
+- Para atualizar a senha deve enviar a senha antiga para validação.
 
 ### 📦 Armas (`Weapon`)
 - Cadastro, atualização e exclusão de produtos (somente `ADMIN`).
-- Campos: `id`, `name`, `type`, `rarity`, `material`, `baseDamage`, `weight`, `description`, `price`, `stockQuantity`, `craftedBy`.
 - Regras de negócio simples de controle de estoque.
+- Associação da arma ao ferreiro que o forjou.
+- Avaliação feita apenas pelos compradores.
+- Recebem notas avaliativas de 1 a 5 pelos compradores.
+- Usa o padrão de projeto **Builder** para a construção da entidade.
 
 ### 🧾 Pedidos (`Order`)
-- Associação de pedidos ao usuário autenticado.
 - Cálculo automático do valor total do pedido.
-- Apenas o cliente pode acessar seus próprios pedidos.
+- Apenas o cliente pode acessar os seus próprios pedidos.
 - Admins têm acesso global para fins de auditoria.
+
+### ⚔️ Ferreiro (`Blacksmith`)
+- Não interagem diretamente com a aplicação.
+- Pode ser adicionado e editado apenas por admins.
+- Tem uma nota avaliativa de 1 a 5 que é a média das notas das armas forjadas por ele.
 
 ---
 
@@ -59,11 +67,11 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 A arquitetura segue o modelo de **camadas** (layered architecture), com separação clara de responsabilidades:
 com.anthony.blacksmithOnlineStore <br>
 │ <br>
-├── controller → Camada de entrada da aplicação (endpoints REST) <br>
+├┬─ controller → Camada de entrada da aplicação (endpoints REST) <br>
+│└─ dto → Objetos de transferência de dados (entrada e saída)<br>
 ├── service → Contém a lógica de negócio <br>
 ├── repository → Interface com o banco de dados (Spring Data JPA)<br>
 ├── security → Configuração de segurança e JWT<br>
-├── dto → Objetos de transferência de dados (entrada e saída)<br>
 ├── entity → Mapeamento JPA das entidades<br>
 ├── enums → Enumerações (ex: Role)<br>
 └── exception → Exceções personalizadas e handlers globais<br>
@@ -79,7 +87,7 @@ Essa estrutura garante:
 ## 🔐 Segurança
 
 A autenticação é baseada em **JWT (JSON Web Token)**.  
-Após o login bem-sucedido, o usuário recebe um token que deve ser enviado no cabeçalho `Authorization` de cada requisição:
+Após o login bem-sucedido, o usuario recebe um token que deve ser enviado no cabeçalho `Authorization` de cada requisição:
 `Authorization: Bearer <seu_token_aqui>`
 
 
@@ -99,7 +107,7 @@ Pré-requisitos
 - PostgreSQL em execução
 
 ### 1️⃣ Clone o repositório
-git clone https://github.com/seuusuario/order-management-api.git
+git clone git@github.com:TonyyCruz/blacksmith-online-store.git
 cd order-management-api
 
 ### 2️⃣ Configure o banco de dados (Opcional)
@@ -110,7 +118,7 @@ spring.datasource.password=sua_senha
 spring.jpa.hibernate.ddl-auto=update
 
 ### 3️⃣ Compile e execute
-mvn spring-boot:run <br>
+```mvn spring-boot:run``` <br>
 Ou diretamente em sua IDE favorita.
 
 ---
@@ -146,6 +154,15 @@ Ou diretamente em sua IDE favorita.
 
 `DELETE /weapons/{id}` # ADMIN
 
+### Ferreiros
+`GET /ferreiros`
+
+`GET /ferreiros/{id}`
+
+`POST /ferreiros`      #ADMIN
+
+`PUT /ferreiros`       #ADMIN
+
 ### Pedidos
 `POST /orders`          # CUSTOMER
 
@@ -156,6 +173,6 @@ Ou diretamente em sua IDE favorita.
 `GET /orders/all`       # ADMIN
 
 ### Avaliação
-- `POST /api/avaliacoes` → Avaliar arma
+- `POST /api/avaliacoes` → Avaliar arma (apenas compradores)
 - `GET /api/armas/{id}/avaliacoes` → Listar avaliações de uma arma
 
