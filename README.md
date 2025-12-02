@@ -4,9 +4,7 @@
 
 A **Blacksmith's Online Store API** é uma aplicação desenvolvida em **Java com Spring Boot** cujo objetivo é gerenciar o fluxo de pedidos, produtos e usuarios em um sistema de e-commerce com tema medieval.
 
-O projeto foi construído com foco em **boas práticas de arquitetura**, **segurança com JWT**, e **organização de código**, seguindo padrões utilizados em empresas para vagas **pleno backend Java/Spring**.
-
-Este projeto também foi idealizado como parte de um **desafio técnico pessoal**, simulando um ambiente real de desenvolvimento profissional.
+Este projeto também foi idealizado como parte de um **desafio técnico pessoal**, focando em **boas práticas de arquitetura**, **segurança com JWT**, e **organização de código**.
 
 ---
 
@@ -21,7 +19,6 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 
 ### 🧍 Usuários (`User`)
 - Cadastro e autenticação de usuarios.
-- Username único.
 - Validação de idade mínima (18 anos).
 - Senha deve possuir os caracteres obrigatorios.
 - Para atualizar a senha deve enviar a senha antiga para validação.
@@ -30,9 +27,8 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 - Cadastro, atualização e exclusão de produtos (somente `ADMIN`).
 - Regras de negócio simples de controle de estoque.
 - Associação da arma ao ferreiro que o forjou.
-- Avaliação feita apenas pelos compradores.
-- Recebem notas avaliativas de 1 a 5 pelos compradores.
-- Usa o padrão de projeto **Builder** para a construção da entidade.
+- Clientes podem avaliar os produtos após a compra com notas de 1 a 5.
+- Usa o padrão de projeto **Builder** para otimizar a construção da entidade.
 
 ### 🧾 Pedidos (`Order`)
 - Cálculo automático do valor total do pedido.
@@ -42,7 +38,7 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 ### ⚔️ Ferreiro (`Blacksmith`)
 - Não interagem diretamente com a aplicação.
 - Pode ser adicionado e editado apenas por admins.
-- Tem uma nota avaliativa de 1 a 5 que é a média das notas das armas forjadas por ele.
+- Tem uma nota avaliativa de 1 a 5 baseada na média das notas das armas forjadas por ele.
 
 ---
 
@@ -148,6 +144,10 @@ Ou diretamente em sua IDE favorita.
 ### Armas
 `GET /weapons`
 
+`GET /weapons/id`
+
+`GET /weapons?`
+
 `POST /weapons`        # ADMIN
 
 `PUT /weapons/{id}`    # ADMIN
@@ -174,5 +174,7 @@ Ou diretamente em sua IDE favorita.
 
 ### Avaliação
 - `POST /api/avaliacoes` → Avaliar arma (apenas compradores)
+
 - `GET /api/armas/{id}/avaliacoes` → Listar avaliações de uma arma
+
 
