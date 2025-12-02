@@ -54,7 +54,7 @@ Este projeto também foi idealizado como parte de um **desafio técnico pessoal*
 | **Build & Dependências** | Maven |
 | **Validações** | Jakarta Bean Validation (javax/jakarta.validation) |
 | **Documentação** | Swagger / Springdoc OpenAPI |
-| **Utilitários** | Lombok, MapStruct (opcional) |
+| **Utilitários** | Lombok, MapStruct |
 
 ---
 
