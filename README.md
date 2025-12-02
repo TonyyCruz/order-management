@@ -4,7 +4,7 @@
 
 A **Blacksmith's Online Store API** é uma aplicação desenvolvida em **Java com Spring Boot** cujo objetivo é gerenciar o fluxo de pedidos, produtos e usuarios em um sistema de e-commerce com tema medieval.
 
-Este projeto também foi idealizado como parte de um **desafio técnico pessoal**, focando em **boas práticas de arquitetura**, **segurança com JWT**, e **organização de código**.
+Esta aplicação, foi idealizada como um **projeto pessoal**, focando em **boas práticas de arquitetura**, **segurança com JWT**, e **organização de código**.
 
 ---
 
