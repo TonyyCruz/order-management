@@ -4,7 +4,7 @@ import com.anthony.blacksmithOnlineStore.controler.dto.user.PasswordUpdateDto;
 import com.anthony.blacksmithOnlineStore.controler.dto.user.UserCreateDto;
 import com.anthony.blacksmithOnlineStore.controler.dto.user.UserUpdateDto;
 import com.anthony.blacksmithOnlineStore.entity.User;
-import com.anthony.blacksmithOnlineStore.security.Role;
+import com.anthony.blacksmithOnlineStore.enums.Role;
 import java.time.LocalDate;
 import java.util.UUID;
 

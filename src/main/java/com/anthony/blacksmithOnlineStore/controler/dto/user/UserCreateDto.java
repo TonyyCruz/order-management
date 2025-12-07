@@ -16,11 +16,11 @@ public record UserCreateDto(
     @ValidAge(min = 18, message = "User must be at least 18 years old.")
     LocalDate birthDate) {
 
-  public User toEntity() {
+  public static User toEntity(UserCreateDto dto) {
     User user = new User();
-    user.setUsername(username);
-    user.setPassword(password);
-    user.setBirthDate(birthDate);
+    user.setUsername(dto.username);
+    user.setPassword(dto.password);
+    user.setBirthDate(dto.birthDate);
     return user;
   }
 }

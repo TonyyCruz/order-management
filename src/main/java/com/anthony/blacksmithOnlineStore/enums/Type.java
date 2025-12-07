@@ -3,7 +3,7 @@ package com.anthony.blacksmithOnlineStore.enums;
 import lombok.Getter;
 
 @Getter
-public enum WeaponType {
+public enum Type {
   SHORT_SWORD("Short Sword"),
   LONG_SWORD("Long Sword"),
   BROADSWORD("Broadsword"),
@@ -33,7 +33,7 @@ public enum WeaponType {
 
   private final String weapon;
 
-  WeaponType(String displayName) {
+  Type(String displayName) {
     this.weapon = displayName;
   }
 }

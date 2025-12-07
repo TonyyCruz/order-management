@@ -23,7 +23,7 @@ public class UserService {
 
   public User create(UserCreateDto createDto) {
     if (usernameExists(createDto.username())) throw new UsernameAlreadyExistsException();
-    User user = createDto.toEntity();
+    User user = UserCreateDto.toEntity(createDto);
     user.setRole(Role.CUSTOMER);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepository.save(user);
@@ -50,8 +50,9 @@ public class UserService {
   }
 
   public User getUserFromAuth(Authentication auth) {
-    return userRepository.findById((UUID) auth.getDetails())
-        .orElseThrow(UserNotFoundException::new);
+    UUID id = (UUID) auth.getDetails();
+    return userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
   }
 
   public void deleteUserFromAuth(Authentication auth) {
