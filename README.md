@@ -133,6 +133,10 @@ Ou diretamente em sua IDE favorita.
 
 - Validações com Bean Validation (ex: idade mínima para cadastro).
 
+- Uso do padrão Builder para criação de entidades complexas (ex: Weapon).
+
+- Specifications para filtros dinâmicos em consultas (ex: busca de armas).
+
 ---
 
 ## 📘 Exemplos de Endpoints
