@@ -1,14 +1,19 @@
 package com.anthony.blacksmithOnlineStore.entity;
 
+import com.anthony.blacksmithOnlineStore.enums.Material;
+import com.anthony.blacksmithOnlineStore.enums.Rarity;
+import com.anthony.blacksmithOnlineStore.enums.Type;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,39 +26,51 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "blacksmiths")
-public class Blacksmith {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Table(name = "items")
+public class Item {
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @Enumerated(EnumType.STRING)
+  private Material material;
+  private Integer baseDamage = 0;
+  private Integer baseDefense = 0;
   @Column(nullable = false)
   private String name;
+  @Column(nullable = false)
+  private BigDecimal price;
   @Column(nullable = false, columnDefinition = "TEXT")
   private String description;
   @Column(nullable = false)
-  @OneToMany(mappedBy = "craftedBy")
-  private final List<Item> craftedItems = new ArrayList<>();
+  private Float weight;
   @Column(nullable = false)
+  private Integer stock;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Type type;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Rarity rarity;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "blacksmith_id")
+  private Blacksmith craftedBy;
   @Setter(AccessLevel.NONE)
   private Double ratingAverage = 0.0;
-  @Column(nullable = false)
   @Setter(AccessLevel.NONE)
+  @Column(nullable = false)
   private Integer ratingCount = 0;
+  @Column(nullable = false)
+  private boolean active = true;
 
   public void addRating(Rating newRating) {
     ratingAverage = ((ratingAverage * ratingCount) + newRating.getRating()) / (ratingCount + 1);
     ratingCount += 1;
   }
 
-  public void addCraftedItem(Item item) {
-    craftedItems.add(item);
-  }
-
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    Blacksmith that = (Blacksmith) o;
-    return Objects.equals(id, that.id);
+    Item item = (Item) o;
+    return Objects.equals(id, item.id);
   }
 
   @Override
@@ -61,13 +78,4 @@ public class Blacksmith {
     return Objects.hashCode(id);
   }
 
-  @Override
-  public String toString() {
-    return "Blacksmith{" +
-        "id=" + id +
-        ", name='" + name + '\'' +
-        ", ratingAverage=" + ratingAverage +
-        ", ratingCount=" + ratingCount +
-        '}';
-  }
 }
