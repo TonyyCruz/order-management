@@ -8,7 +8,7 @@ import com.anthony.blacksmithOnlineStore.exceptions.InvalidCredentialsException;
 import com.anthony.blacksmithOnlineStore.exceptions.UserNotFoundException;
 import com.anthony.blacksmithOnlineStore.exceptions.UsernameAlreadyExistsException;
 import com.anthony.blacksmithOnlineStore.repository.UserRepository;
-import com.anthony.blacksmithOnlineStore.security.Role;
+import com.anthony.blacksmithOnlineStore.enums.Role;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

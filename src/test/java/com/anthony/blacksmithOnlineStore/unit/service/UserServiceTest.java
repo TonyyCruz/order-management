@@ -11,7 +11,7 @@ import com.anthony.blacksmithOnlineStore.exceptions.InvalidCredentialsException;
 import com.anthony.blacksmithOnlineStore.exceptions.UsernameAlreadyExistsException;
 import com.anthony.blacksmithOnlineStore.helper.mocks.MockUser;
 import com.anthony.blacksmithOnlineStore.repository.UserRepository;
-import com.anthony.blacksmithOnlineStore.security.Role;
+import com.anthony.blacksmithOnlineStore.enums.Role;
 import com.anthony.blacksmithOnlineStore.service.UserService;
 import java.time.LocalDate;
 import java.util.Optional;

@@ -12,7 +12,7 @@ import com.anthony.blacksmithOnlineStore.controler.dto.user.UserCreateDto;
 import com.anthony.blacksmithOnlineStore.entity.User;
 import com.anthony.blacksmithOnlineStore.helper.mocks.MockUser;
 import com.anthony.blacksmithOnlineStore.integration.helper.TestBase;
-import com.anthony.blacksmithOnlineStore.security.Role;
+import com.anthony.blacksmithOnlineStore.enums.Role;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jayway.jsonpath.JsonPath;

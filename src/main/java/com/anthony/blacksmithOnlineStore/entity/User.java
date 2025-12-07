@@ -1,6 +1,6 @@
 package com.anthony.blacksmithOnlineStore.entity;
 
-import com.anthony.blacksmithOnlineStore.security.Role;
+import com.anthony.blacksmithOnlineStore.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,12 +8,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 @Setter
-@ToString(exclude = "password")
+@ToString(exclude = {"password", "orders", "reviews"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -41,6 +44,21 @@ public class User implements UserDetails {
   private Role role;
   @Column(nullable = false, name = "birth_date")
   private LocalDate birthDate;
+  @Setter(AccessLevel.NONE)
+  @OneToMany(mappedBy = "user")
+  private final List<Order> orders = new ArrayList<>();
+  @OneToMany(mappedBy = "user")
+  private final List<Rating> reviews = new ArrayList<>();
+
+  public void addOrder(Order order) {
+    orders.add(order);
+    order.setUser(this);
+  }
+
+  public void addReview(Rating review) {
+    reviews.add(review);
+    review.setUser(this);
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

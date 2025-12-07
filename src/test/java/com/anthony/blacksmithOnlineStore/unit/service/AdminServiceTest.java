@@ -3,7 +3,7 @@ package com.anthony.blacksmithOnlineStore.unit.service;
 import com.anthony.blacksmithOnlineStore.controler.dto.admin.RoleUpdateDto;
 import com.anthony.blacksmithOnlineStore.exceptions.ForbiddenOperationException;
 import com.anthony.blacksmithOnlineStore.helper.mocks.MockUser;
-import com.anthony.blacksmithOnlineStore.security.Role;
+import com.anthony.blacksmithOnlineStore.enums.Role;
 import com.anthony.blacksmithOnlineStore.exceptions.UserNotFoundException;
 import com.anthony.blacksmithOnlineStore.entity.User;
 import com.anthony.blacksmithOnlineStore.repository.UserRepository;

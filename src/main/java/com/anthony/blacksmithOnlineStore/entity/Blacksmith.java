@@ -1,9 +1,7 @@
 package com.anthony.blacksmithOnlineStore.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,32 +30,28 @@ public class Blacksmith {
   private String name;
   @Column(nullable = false, columnDefinition = "TEXT")
   private String description;
+  @Column(nullable = false)
+  @OneToMany(mappedBy = "craftedBy")
+  private final List<Item> craftedItems = new ArrayList<>();
+  @Column(nullable = false)
   @Setter(AccessLevel.NONE)
-  @OneToMany(mappedBy = "blacksmith", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  private List<Rating> ratings = new ArrayList<>();
+  private Double ratingAverage = 0.0;
+  @Column(nullable = false)
+  @Setter(AccessLevel.NONE)
+  private Integer ratingCount = 0;
 
-  public Double getRating() {
-    if (ratings.isEmpty()) return 0.0;
-    Double sum = ratings.stream()
-        .reduce(0.0, (acc, r) -> acc + r.getRating(), Double::sum);
-    return sum / ratings.size();
+  public void addRating(Rating newRating) {
+    ratingAverage = ((ratingAverage * ratingCount) + newRating.getRating()) / (ratingCount + 1);
+    ratingCount += 1;
   }
 
-  @Override
-  public String toString() {
-    return "Blacksmith{" +
-        "id=" + id +
-        ", name='" + name + '\'' +
-        ", description='" + description + '\'' +
-        ", rating=" + getRating() +
-        '}';
+  public void addCraftedItem(Item item) {
+    craftedItems.add(item);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+    if (o == null || getClass() != o.getClass()) return false;
     Blacksmith that = (Blacksmith) o;
     return Objects.equals(id, that.id);
   }
@@ -65,5 +59,15 @@ public class Blacksmith {
   @Override
   public int hashCode() {
     return Objects.hashCode(id);
+  }
+
+  @Override
+  public String toString() {
+    return "Blacksmith{" +
+        "id=" + id +
+        ", name='" + name + '\'' +
+        ", ratingAverage=" + ratingAverage +
+        ", ratingCount=" + ratingCount +
+        '}';
   }
 }
