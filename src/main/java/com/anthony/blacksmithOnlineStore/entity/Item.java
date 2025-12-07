@@ -14,15 +14,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -58,6 +63,11 @@ public class Item {
   @Setter(AccessLevel.NONE)
   @Column(nullable = false)
   private Integer ratingCount = 0;
+  @Column(nullable = false, updatable = false)
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
   @Column(nullable = false)
   private boolean active = true;
 
