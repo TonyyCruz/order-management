@@ -16,7 +16,7 @@ public class AdminService {
   private final UserRepository userRepository;
 
   public User getById(UUID id) {
-    return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
   }
 
   public void updateRole(UUID id, RoleUpdateDto roleUpdateDto, Authentication auth) {
@@ -30,6 +30,7 @@ public class AdminService {
   }
 
   public User findByUsername(String username) {
-    return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+    return userRepository.findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
   }
 }

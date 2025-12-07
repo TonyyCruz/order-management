@@ -4,10 +4,10 @@ import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
 
 public record BlacksmithRequestDto(String name, String description) {
 
-  public Blacksmith toEntity() {
+  public static Blacksmith toEntity(BlacksmithRequestDto dto) {
     Blacksmith blacksmith = new Blacksmith();
-    blacksmith.setName(this.name);
-    blacksmith.setDescription(this.description);
+    blacksmith.setName(dto.name);
+    blacksmith.setDescription(dto.description);
     return blacksmith;
   }
 }

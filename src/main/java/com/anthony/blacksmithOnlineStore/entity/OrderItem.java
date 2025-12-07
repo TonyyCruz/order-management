@@ -8,42 +8,41 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Getter
-@Setter
-@Table(name = "ratings")
-public class Rating {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
-  @ManyToOne(optional = false)
-  private Item item;
+@Table(name = "order_items")
+public class OrderItem {
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
   @Column(nullable = false)
-  private Double rating;
-  @Column(columnDefinition = "TEXT")
-  private String comment;
-  @CreationTimestamp
-  private LocalDate date;
+  private Long productId;
+  @Column(nullable = false)
+  private String productName;
+  @Column(nullable = false)
+  private BigDecimal unitPrice;
+  @Column(nullable = false)
+  private Integer quantity;
+  @ManyToOne
+  @JoinColumn(name = "order_id", nullable = false)
+  private Order order;
+  @Column(nullable = false)
+  private boolean reviewed = false;
 
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    Rating rating = (Rating) o;
-    return Objects.equals(id, rating.id);
+    OrderItem orderItem = (OrderItem) o;
+    return Objects.equals(id, orderItem.id);
   }
 
   @Override
@@ -53,13 +52,13 @@ public class Rating {
 
   @Override
   public String toString() {
-    return "Rating{" +
+    return "OrderItem{" +
         "id=" + id +
-        ", user=" + user.getId() +
-        ", item=" + item +
-        ", rating=" + rating +
-        ", comment='" + comment + '\'' +
-        ", date=" + date +
+        ", productId=" + productId +
+        ", productName='" + productName + '\'' +
+        ", unitPrice=" + unitPrice +
+        ", quantity=" + quantity +
+        ", order=" + order.getId() +
         '}';
   }
 }

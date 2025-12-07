@@ -5,8 +5,9 @@ import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
 import com.anthony.blacksmithOnlineStore.exceptions.BlacksmithNotFoundException;
 import com.anthony.blacksmithOnlineStore.repository.BlacksmithRepository;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,23 +16,33 @@ public class BlacksmithService {
   private final BlacksmithRepository blacksmithRepository;
 
   public Blacksmith findById(Long id) {
-    return blacksmithRepository.findById(id).orElseThrow(BlacksmithNotFoundException::new);
+    return blacksmithRepository.findById(id)
+        .orElseThrow(() -> new BlacksmithNotFoundException(id));
+  }
+
+  public Page<Blacksmith> findByName(String name, Pageable pageable) {
+    return blacksmithRepository.findByNameContaining(name, pageable);
   }
 
   @Transactional
-  public Blacksmith create(BlacksmithRequestDto blacksmithDto) {
-    return blacksmithRepository.save(blacksmithDto.toEntity());
+  public Blacksmith create(BlacksmithRequestDto dto) {
+    return blacksmithRepository.save(BlacksmithRequestDto.toEntity(dto));
   }
 
   @Transactional
-  public Blacksmith update(Long id, BlacksmithRequestDto blacksmithDto) {
-    Blacksmith blacksmith = findById(id);
-    blacksmith.setName(blacksmithDto.name());
-    blacksmith.setDescription(blacksmith.getDescription());
+  public Blacksmith update(Long id, BlacksmithRequestDto dto) {
+    Blacksmith blacksmith = getReferenceById(id);
+    blacksmith.setName(dto.name());
+    blacksmith.setDescription(dto.description());
     return blacksmithRepository.save(blacksmith);
   }
 
-  public List<Blacksmith> findAll() {
-    return blacksmithRepository.findAll();
+  public Page<Blacksmith> findAll(Pageable pageable) {
+    return blacksmithRepository.findAll(pageable);
+  }
+
+  public Blacksmith getReferenceById(Long id) {
+    if (!blacksmithRepository.existsById(id)) throw new BlacksmithNotFoundException(id);
+    return blacksmithRepository.getReferenceById(id);
   }
 }

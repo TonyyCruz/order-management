@@ -1,0 +1,49 @@
+package com.anthony.blacksmithOnlineStore.controler.dto.item;
+
+import com.anthony.blacksmithOnlineStore.controler.dto.blacksmith.BlacksmithResponseDto;
+import com.anthony.blacksmithOnlineStore.entity.Item;
+import com.anthony.blacksmithOnlineStore.enums.Material;
+import com.anthony.blacksmithOnlineStore.enums.Rarity;
+import com.anthony.blacksmithOnlineStore.enums.Type;
+import java.math.BigDecimal;
+import lombok.Builder;
+
+@Builder
+public record ItemResponseDto(
+    Long id,
+    Material material,
+    Integer baseDamage,
+    Integer baseDefense,
+    String name,
+    BigDecimal price,
+    String description,
+    Float weight,
+    Integer stock,
+    Type type,
+    Rarity rarity,
+    BlacksmithResponseDto craftedBy,
+    Double ratingAverage,
+    Integer ratingCount,
+    boolean active
+) {
+
+  public static ItemResponseDto fromEntity(Item item) {
+    return ItemResponseDto.builder()
+        .id(item.getId())
+        .material(item.getMaterial())
+        .baseDamage(item.getBaseDamage())
+        .baseDefense(item.getBaseDefense())
+        .name(item.getName())
+        .price(item.getPrice())
+        .description(item.getDescription())
+        .weight(item.getWeight())
+        .stock(item.getStock())
+        .type(item.getType())
+        .rarity(item.getRarity())
+        .craftedBy(BlacksmithResponseDto.fromEntity(item.getCraftedBy()))
+        .ratingAverage(item.getRatingAverage())
+        .ratingCount(item.getRatingCount())
+        .active(item.isActive())
+        .build();
+  }
+}
