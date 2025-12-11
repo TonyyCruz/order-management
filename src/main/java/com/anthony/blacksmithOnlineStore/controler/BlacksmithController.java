@@ -1,11 +1,9 @@
 package com.anthony.blacksmithOnlineStore.controler;
 
-import com.anthony.blacksmithOnlineStore.controler.dto.blacksmith.BlacksmithResponseDto;
 import com.anthony.blacksmithOnlineStore.controler.dto.blacksmith.BlacksmithRequestDto;
+import com.anthony.blacksmithOnlineStore.controler.dto.blacksmith.BlacksmithResponseDto;
 import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
 import com.anthony.blacksmithOnlineStore.service.BlacksmithService;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +46,7 @@ public class BlacksmithController {
 
   @GetMapping("/blacksmiths")
   public ResponseEntity<Page<BlacksmithResponseDto>> findAll(
-      @PageableDefault(page = 0, size = 10, sort = "name", direction = Direction.ASC)
+      @PageableDefault(page = 0, size = 20, sort = "name", direction = Direction.ASC)
       Pageable pageable
   ) {
     Page<Blacksmith> blacksmiths = blacksmithService.findAll(pageable);
@@ -63,7 +61,7 @@ public class BlacksmithController {
 
   @GetMapping
   public ResponseEntity<Page<BlacksmithResponseDto>> findByName(
-      @PageableDefault(page = 0, size = 10, sort = "name", direction = Direction.ASC)
+      @PageableDefault(page = 0, size = 20, sort = "name", direction = Direction.ASC)
       Pageable pageable,
       @RequestParam(value = "name") String name) {
     Page<Blacksmith> blacksmiths = blacksmithService.findByName(name, pageable);

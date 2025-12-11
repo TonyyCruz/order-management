@@ -66,7 +66,7 @@ public class ItemController {
 
   @GetMapping
   public ResponseEntity<Page<ItemResponseDto>> getAllItems(
-      @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.DESC)
+      @PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC)
       Pageable pageable) {
     Page<Item> items = itemService.findAll(pageable);
     return ResponseEntity.ok(items.map(ItemResponseDto::fromEntity));
@@ -75,7 +75,7 @@ public class ItemController {
   @GetMapping("/blacksmith/{blacksmithId}")
   public ResponseEntity<Page<ItemResponseDto>> getItensByBlacksmithId(
       @PathVariable Long blacksmithId,
-      @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.DESC)
+      @PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC)
       Pageable pageable) {
     Page<Item> items = itemService.findByBlacksmithId(blacksmithId, pageable);
     return ResponseEntity.ok(items.map(ItemResponseDto::fromEntity));
@@ -84,7 +84,7 @@ public class ItemController {
   @PostMapping("/filter")
   public ResponseEntity<Page<ItemResponseDto>> getFilteredItems(
       @RequestBody ItemFilterDto filter,
-      @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.DESC)
+      @PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC)
       Pageable pageable) {
     Page<Item> items = itemService.findFilteredItems(filter, pageable);
     return ResponseEntity.ok(items.map(ItemResponseDto::fromEntity));
