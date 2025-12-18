@@ -13,7 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -42,7 +44,11 @@ public class Item {
   @Column(nullable = false)
   private String name;
   @Column(nullable = false)
-  private BigDecimal price;
+  private BigDecimal basePrice;
+  @Column(nullable = false)
+  private BigDecimal finalPrice;
+  @Column(nullable = false)
+  private boolean hasDiscount = false;
   @Column(nullable = false, columnDefinition = "TEXT")
   private String description;
   @Column(nullable = false)
@@ -58,11 +64,15 @@ public class Item {
   @ManyToOne(optional = false)
   @JoinColumn(name = "blacksmith_id")
   private Blacksmith craftedBy;
+  @Column(nullable = false)
   @Setter(AccessLevel.NONE)
-  private Double ratingAverage = 0.0;
+  private long totalRatingsSum = 0;
   @Setter(AccessLevel.NONE)
   @Column(nullable = false)
   private Integer ratingCount = 0;
+  @Column(precision = 2, scale = 1)
+  @Setter(AccessLevel.NONE)
+  private BigDecimal ratingAverage;
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
   private LocalDateTime createdAt;
@@ -70,10 +80,15 @@ public class Item {
   private LocalDateTime updatedAt;
   @Column(nullable = false)
   private boolean active = true;
+  @Version
+  private Long version;
 
   public void addRating(Rating newRating) {
-    ratingAverage = ((ratingAverage * ratingCount) + newRating.getRating()) / (ratingCount + 1);
-    ratingCount += 1;
+    ratingCount++;
+    totalRatingsSum += newRating.getRating();
+    ratingAverage = BigDecimal
+        .valueOf(totalRatingsSum)
+        .divide(BigDecimal.valueOf(ratingCount), 1, RoundingMode.HALF_UP);
   }
 
   @Override
