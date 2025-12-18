@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,14 +38,22 @@ public class Blacksmith {
   private final List<Item> craftedItems = new ArrayList<>();
   @Column(nullable = false)
   @Setter(AccessLevel.NONE)
-  private Double ratingAverage = 0.0;
-  @Column(nullable = false)
+  private long totalRatingsSum = 0;
   @Setter(AccessLevel.NONE)
+  @Column(nullable = false)
   private Integer ratingCount = 0;
+  @Column(precision = 2, scale = 1)
+  @Setter(AccessLevel.NONE)
+  private BigDecimal ratingAverage;
+  @Version
+  private Long version;
 
   public void addRating(Rating newRating) {
-    ratingAverage = ((ratingAverage * ratingCount) + newRating.getRating()) / (ratingCount + 1);
-    ratingCount += 1;
+    ratingCount++;
+    totalRatingsSum += newRating.getRating();
+    ratingAverage = BigDecimal
+        .valueOf(totalRatingsSum)
+        .divide(BigDecimal.valueOf(ratingCount), 1, RoundingMode.HALF_UP);
   }
 
   public void addCraftedItem(Item item) {
