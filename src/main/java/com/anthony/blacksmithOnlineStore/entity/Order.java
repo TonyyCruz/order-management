@@ -1,5 +1,7 @@
 package com.anthony.blacksmithOnlineStore.entity;
 
+import com.anthony.blacksmithOnlineStore.enums.OrderStatus;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,12 +25,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "orders")
 public class Order {
   @Id
@@ -39,23 +42,38 @@ public class Order {
   private User user;
   @CreationTimestamp
   private LocalDateTime createdAt;
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private Status status;
+  private OrderStatus status = OrderStatus.RECEIVED;
   @Setter(AccessLevel.NONE)
-  @OneToMany(mappedBy = "order")
+  @OneToMany(mappedBy = "order", cascade =  CascadeType.PERSIST)
   private final List<OrderItem> orderItems = new ArrayList<>();
   @Setter(AccessLevel.NONE)
-  private BigDecimal total = BigDecimal.ZERO;
+  @Column(nullable = false)
+  private BigDecimal total;
 
   public void addItem(OrderItem item) {
+    checkIfFinalized();
     orderItems.add(item);
-    total = total.add(item.getUnitPrice());
+    item.setOrder(this);
   }
 
   public void removeItem(OrderItem item) {
-    if (orderItems.remove(item)) {
-      total = total.subtract(item.getUnitPrice());
+    checkIfFinalized();
+    orderItems.remove(item);
+  }
+
+  public void recalculateTotal() {
+    this.total = orderItems.stream()
+        .map(OrderItem::getTotalPrice)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  private void checkIfFinalized() {
+    if (status.isFinalState()) {
+      throw new IllegalStateException("Item não pode ser alterado após finalização.");
     }
   }
 
@@ -75,7 +93,7 @@ public class Order {
   public String toString() {
     return "Order{" +
         "id=" + id +
-        ", user=" + user.getId() +
+        ", user=" + (user == null? null : user.getId()) +
         ", createdAt=" + createdAt +
         ", status=" + status +
         ", orderItems=" + orderItems +
