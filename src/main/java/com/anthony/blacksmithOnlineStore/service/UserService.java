@@ -34,7 +34,7 @@ public class UserService {
     if (isUsernameChanged && usernameExists(updateDto.username())) {
       throw new UsernameAlreadyExistsException();
     }
-    User user = userRepository.getReferenceById((UUID) auth.getDetails());
+    User user = getUserReferenceFromAuth(auth);
     user.setUsername(updateDto.username());
     user.setBirthDate(updateDto.birthDate());
     return userRepository.save(user); // Opcional com o @Transactional, mas melhora a testabilidade
@@ -53,6 +53,10 @@ public class UserService {
     UUID id = (UUID) auth.getDetails();
     return userRepository.findById(id)
         .orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  public User getUserReferenceFromAuth(Authentication auth) {
+    return userRepository.getReferenceById((UUID) auth.getDetails());
   }
 
   public void deleteUserFromAuth(Authentication auth) {
