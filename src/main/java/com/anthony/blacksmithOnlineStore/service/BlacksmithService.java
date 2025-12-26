@@ -2,9 +2,12 @@ package com.anthony.blacksmithOnlineStore.service;
 
 import com.anthony.blacksmithOnlineStore.controler.dto.blacksmith.BlacksmithRequestDto;
 import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
+import com.anthony.blacksmithOnlineStore.entity.Rating;
 import com.anthony.blacksmithOnlineStore.exceptions.BlacksmithNotFoundException;
 import com.anthony.blacksmithOnlineStore.repository.BlacksmithRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,5 +47,11 @@ public class BlacksmithService {
   public Blacksmith getReferenceById(Long id) {
     if (!blacksmithRepository.existsById(id)) throw new BlacksmithNotFoundException(id);
     return blacksmithRepository.getReferenceById(id);
+  }
+
+  public void addRating(Long blacksmithId, int rating) {
+    Blacksmith blacksmith = findById(blacksmithId);
+    blacksmith.addRating(rating);
+    blacksmithRepository.save(blacksmith);
   }
 }
