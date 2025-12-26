@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import jdk.jshell.Snippet.Status;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,13 +53,13 @@ public class Order {
   @Column(nullable = false)
   private BigDecimal total;
 
-  public void addItem(OrderItem item) {
+  public void addOrderItem(OrderItem item) {
     checkIfFinalized();
     orderItems.add(item);
     item.setOrder(this);
   }
 
-  public void removeItem(OrderItem item) {
+  public void removeOrderItem(OrderItem item) {
     checkIfFinalized();
     orderItems.remove(item);
   }

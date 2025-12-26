@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,8 +40,8 @@ public class Item {
   private Long id;
   @Enumerated(EnumType.STRING)
   private Material material;
-  private Integer baseDamage = 0;
-  private Integer baseDefense = 0;
+  private Integer baseDamage;
+  private Integer baseDefense;
   @Column(nullable = false)
   private String name;
   @Column(nullable = false)
@@ -61,9 +62,12 @@ public class Item {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private Rarity rarity;
-  @ManyToOne(optional = false)
+  @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "blacksmith_id")
   private Blacksmith craftedBy;
+  @Column(nullable = false)
+  @Setter(AccessLevel.NONE)
+  private long sold = 0;
   @Column(nullable = false)
   @Setter(AccessLevel.NONE)
   private long totalRatingsSum = 0;
@@ -82,13 +86,21 @@ public class Item {
   private boolean active = true;
   @Version
   private Long version;
+  @Column(nullable = false, updatable = false)
+  private String blacksmithName;
+  @Column(nullable = false, updatable = false)
+  private Long blacksmithId;
 
-  public void addRating(Rating newRating) {
+  public void addRating(Integer newRating) {
     ratingCount++;
-    totalRatingsSum += newRating.getRating();
+    totalRatingsSum += newRating;
     ratingAverage = BigDecimal
         .valueOf(totalRatingsSum)
         .divide(BigDecimal.valueOf(ratingCount), 1, RoundingMode.HALF_UP);
+  }
+
+  public void addSoldQuantity(int quantity) {
+    this.sold += quantity;
   }
 
   @Override

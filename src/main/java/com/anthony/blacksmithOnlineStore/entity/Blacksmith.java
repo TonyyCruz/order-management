@@ -48,9 +48,9 @@ public class Blacksmith {
   @Version
   private Long version;
 
-  public void addRating(Rating newRating) {
+  public void addRating(Integer newRating) {
     ratingCount++;
-    totalRatingsSum += newRating.getRating();
+    totalRatingsSum += newRating;
     ratingAverage = BigDecimal
         .valueOf(totalRatingsSum)
         .divide(BigDecimal.valueOf(ratingCount), 1, RoundingMode.HALF_UP);

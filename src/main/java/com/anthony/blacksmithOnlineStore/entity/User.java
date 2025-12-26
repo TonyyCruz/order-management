@@ -1,6 +1,7 @@
 package com.anthony.blacksmithOnlineStore.entity;
 
 import com.anthony.blacksmithOnlineStore.enums.Role;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,14 +46,16 @@ public class User implements UserDetails {
   @Column(nullable = false, name = "birth_date")
   private LocalDate birthDate;
   @Setter(AccessLevel.NONE)
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
   private final List<Order> orders = new ArrayList<>();
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
   private final List<Rating> reviews = new ArrayList<>();
 
   public void addOrder(Order order) {
-    orders.add(order);
-    order.setUser(this);
+    if (!orders.contains(order)) {
+      orders.add(order);
+      order.setUser(this);
+    }
   }
 
   public void addReview(Rating review) {
