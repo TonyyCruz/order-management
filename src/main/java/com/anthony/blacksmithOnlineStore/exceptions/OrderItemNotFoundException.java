@@ -1,4 +1,9 @@
 package com.anthony.blacksmithOnlineStore.exceptions;
 
-public class OrderItemNotFoundEException {
+import com.anthony.blacksmithOnlineStore.exceptions.baseExceptions.NotFoundException;
+
+public class OrderItemNotFoundException extends NotFoundException {
+  public OrderItemNotFoundException(Long id) {
+    super("Order item not found with id: " + id);
+  }
 }
