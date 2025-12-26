@@ -23,17 +23,18 @@ public record ItemRequestDto(
 
   public static Item toEntity(ItemRequestDto dto) {
     return Item.builder()
-        .material(dto.material)
-        .baseDamage(dto.baseDamage)
-        .baseDefense(dto.baseDefense)
-        .name(dto.name)
-        .price(dto.price)
-        .description(dto.description)
-        .weight(dto.weight)
-        .stock(dto.stock)
-        .type(dto.type)
-        .rarity(dto.rarity)
-        .active(dto.active)
+        .material(dto.material())
+        .baseDamage(dto.baseDamage())
+        .baseDefense(dto.baseDefense())
+        .name(dto.name())
+        .basePrice(dto.price())
+        .description(dto.description())
+        .weight(dto.weight())
+        .stock(dto.stock())
+        .type(dto.type())
+        .rarity(dto.rarity())
+        .active(dto.active())
+        .blacksmithId(dto.blacksmithId())
         .build();
   }
 }
