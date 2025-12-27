@@ -15,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,10 +38,12 @@ public class ItemController {
     return ResponseEntity.status(HttpStatus.CREATED).body(ItemResponseDto.fromEntity(item));
   }
 
-  @PutMapping
+  @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<ItemResponseDto> updateItem(@RequestBody @Valid ItemRequestDto dto) {
-    Item item = itemService.update(dto);
+  public ResponseEntity<ItemResponseDto> updateItem(
+      @PathVariable Long id,
+      @RequestBody @Valid ItemRequestDto dto) {
+    Item item = itemService.update(id, dto);
     return ResponseEntity.ok(ItemResponseDto.fromEntity(item));
   }
 
@@ -72,15 +75,6 @@ public class ItemController {
     return ResponseEntity.ok(items.map(ItemResponseDto::fromEntity));
   }
 
-  @GetMapping("/blacksmith/{blacksmithId}")
-  public ResponseEntity<Page<ItemResponseDto>> getItensByBlacksmithId(
-      @PathVariable Long blacksmithId,
-      @PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC)
-      Pageable pageable) {
-    Page<Item> items = itemService.findByBlacksmithId(blacksmithId, pageable);
-    return ResponseEntity.ok(items.map(ItemResponseDto::fromEntity));
-  }
-
   @PostMapping("/filter")
   public ResponseEntity<Page<ItemResponseDto>> getFilteredItems(
       @RequestBody ItemFilterDto filter,
@@ -88,5 +82,12 @@ public class ItemController {
       Pageable pageable) {
     Page<Item> items = itemService.findFilteredItems(filter, pageable);
     return ResponseEntity.ok(items.map(ItemResponseDto::fromEntity));
+  }
+
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+    itemService.deleteItem(id);
+    return ResponseEntity.noContent().build();
   }
 }

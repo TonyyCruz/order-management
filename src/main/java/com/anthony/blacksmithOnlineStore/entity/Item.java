@@ -7,13 +7,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -37,12 +40,16 @@ public class Item {
   private Long id;
   @Enumerated(EnumType.STRING)
   private Material material;
-  private Integer baseDamage = 0;
-  private Integer baseDefense = 0;
+  private Integer baseDamage;
+  private Integer baseDefense;
   @Column(nullable = false)
   private String name;
   @Column(nullable = false)
-  private BigDecimal price;
+  private BigDecimal basePrice;
+  @Column(nullable = false)
+  private BigDecimal finalPrice;
+  @Column(nullable = false)
+  private boolean hasDiscount = false;
   @Column(nullable = false, columnDefinition = "TEXT")
   private String description;
   @Column(nullable = false)
@@ -55,14 +62,21 @@ public class Item {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private Rarity rarity;
-  @ManyToOne(optional = false)
+  @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "blacksmith_id")
   private Blacksmith craftedBy;
+  @Column(nullable = false)
   @Setter(AccessLevel.NONE)
-  private Double ratingAverage = 0.0;
+  private long sold = 0;
+  @Column(nullable = false)
+  @Setter(AccessLevel.NONE)
+  private long totalRatingsSum = 0;
   @Setter(AccessLevel.NONE)
   @Column(nullable = false)
   private Integer ratingCount = 0;
+  @Column(precision = 2, scale = 1)
+  @Setter(AccessLevel.NONE)
+  private BigDecimal ratingAverage;
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
   private LocalDateTime createdAt;
@@ -70,10 +84,23 @@ public class Item {
   private LocalDateTime updatedAt;
   @Column(nullable = false)
   private boolean active = true;
+  @Version
+  private Long version;
+  @Column(nullable = false, updatable = false)
+  private String blacksmithName;
+  @Column(nullable = false, updatable = false)
+  private Long blacksmithId;
 
-  public void addRating(Rating newRating) {
-    ratingAverage = ((ratingAverage * ratingCount) + newRating.getRating()) / (ratingCount + 1);
-    ratingCount += 1;
+  public void addRating(Integer newRating) {
+    ratingCount++;
+    totalRatingsSum += newRating;
+    ratingAverage = BigDecimal
+        .valueOf(totalRatingsSum)
+        .divide(BigDecimal.valueOf(ratingCount), 1, RoundingMode.HALF_UP);
+  }
+
+  public void addSoldQuantity(int quantity) {
+    this.sold += quantity;
   }
 
   @Override

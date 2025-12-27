@@ -22,7 +22,7 @@ public record ItemResponseDto(
     Type type,
     Rarity rarity,
     BlacksmithResponseDto craftedBy,
-    Double ratingAverage,
+    BigDecimal ratingAverage,
     Integer ratingCount,
     boolean active
 ) {
@@ -34,7 +34,7 @@ public record ItemResponseDto(
         .baseDamage(item.getBaseDamage())
         .baseDefense(item.getBaseDefense())
         .name(item.getName())
-        .price(item.getPrice())
+        .price(item.getBasePrice())
         .description(item.getDescription())
         .weight(item.getWeight())
         .stock(item.getStock())

@@ -2,11 +2,16 @@ package com.anthony.blacksmithOnlineStore.service;
 
 import com.anthony.blacksmithOnlineStore.controler.dto.item.ItemFilterDto;
 import com.anthony.blacksmithOnlineStore.controler.dto.item.ItemRequestDto;
+import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
 import com.anthony.blacksmithOnlineStore.entity.Item;
+import com.anthony.blacksmithOnlineStore.exceptions.DataModifyException;
+import com.anthony.blacksmithOnlineStore.exceptions.ForbiddenOperationException;
 import com.anthony.blacksmithOnlineStore.exceptions.ItemNotFoundException;
 import com.anthony.blacksmithOnlineStore.repository.ItemRepository;
 import com.anthony.blacksmithOnlineStore.repository.specification.ItemSpecifications;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,14 +27,31 @@ public class ItemService {
   @Transactional
   public Item create(ItemRequestDto dto) {
     Item item = ItemRequestDto.toEntity(dto);
-    item.setCraftedBy(blacksmithService.getReferenceById(dto.blacksmithId()));
+    Blacksmith blacksmith = blacksmithService.findById(dto.blacksmithId());
+    item.setCraftedBy(blacksmith);
+    item.setBlacksmithName(blacksmith.getName());
     return itemRepository.save(item);
   }
 
   @Transactional
-  public Item update(ItemRequestDto dto) {
-    Item item = ItemRequestDto.toEntity(dto);
-    item.setCraftedBy(blacksmithService.getReferenceById(dto.blacksmithId()));
+  public Item update(Long id, ItemRequestDto dto) {
+    Blacksmith blacksmith = blacksmithService.findById(dto.blacksmithId());
+    Item item = getReferenceById(id);
+    item.setName(dto.name());
+    item.setMaterial(dto.material());
+    item.setBaseDamage(dto.baseDamage());
+    item.setBaseDefense(dto.baseDefense());
+    item.setBasePrice(dto.price());
+    item.setDescription(dto.description());
+    item.setWeight(dto.weight());
+    item.setStock(dto.stock());
+    item.setType(dto.type());
+    item.setRarity(dto.rarity());
+    item.setActive(dto.active());
+    item.setCraftedBy(blacksmith);
+    item.setBlacksmithId(dto.blacksmithId());
+    item.setBlacksmithName(blacksmith.getName());
+
     return itemRepository.save(item);
   }
 
@@ -53,8 +75,16 @@ public class ItemService {
     itemRepository.save(item);
   }
 
+  public void deleteItem(Long id) {
+    Item item = findById(id);
+    if (item.getSold() > 0) {
+      throw new ForbiddenOperationException("Cannot delete an item that has been sold.");
+    }
+    itemRepository.deleteById(id);
+  }
+
   public Item getReferenceById(Long id) {
-    if (!itemRepository.existsById(id)) throw new ItemNotFoundException(id);
+    itemExistesVerifier(id);
     return itemRepository.getReferenceById(id);
   }
 
@@ -65,5 +95,40 @@ public class ItemService {
   public Page<Item> findFilteredItems(ItemFilterDto filter, Pageable pageable) {
     Specification<Item> specs = ItemSpecifications.withFilters(filter);
     return itemRepository.findAll(specs, pageable);
+  }
+
+  @Transactional
+  public void incrementStock(Long itemId, int qty) {
+    itemExistesVerifier(itemId);
+    int modifiedLines =  itemRepository.incrementStock(itemId, qty);
+    if (modifiedLines == 0) {
+      throw new DataModifyException("Failed to increment stock for item with id: " + itemId);
+    }
+  }
+
+  @Transactional
+  public void decrementStock(Long itemId, int qty) {
+    itemExistesVerifier(itemId);
+    int modifiedLines = itemRepository.decrementStock(itemId, qty);
+    if (modifiedLines == 0) {
+      throw new DataModifyException("Failed to decrement stock for item with id: " + itemId);
+    }
+  }
+
+  @Transactional
+  public void makeSale(Long itemId, int qty) {
+    Item item = findById(itemId);
+    item.addSoldQuantity(qty);
+    decrementStock(itemId, qty);
+  }
+
+  private void itemExistesVerifier(Long id) {
+    if (!itemRepository.existsById(id)) throw new ItemNotFoundException(id);
+  }
+
+  public void addRating(Long itemId, int rating) {
+    Item item = findById(itemId);
+    item.addRating(rating);
+    itemRepository.save(item);
   }
 }

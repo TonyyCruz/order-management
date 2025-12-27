@@ -1,6 +1,7 @@
 package com.anthony.blacksmithOnlineStore.controler.dto.Order;
 
-import com.anthony.blacksmithOnlineStore.controler.dto.OrderItem.OderItemResponseDto;
+import com.anthony.blacksmithOnlineStore.controler.dto.OrderItem.OrderItemResponseDto;
+import com.anthony.blacksmithOnlineStore.entity.Order;
 import com.anthony.blacksmithOnlineStore.enums.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +13,22 @@ public record OrderResponseDto(
     UUID userId,
     LocalDateTime createdAt,
     OrderStatus status,
-    List<OderItemResponseDto> items,
+    List<OrderItemResponseDto> items,
     BigDecimal total) {
+
+  public static OrderResponseDto fromEntity(Order order) {
+    List<OrderItemResponseDto> orderItemsDto = order
+        .getOrderItems()
+        .stream()
+        .map(OrderItemResponseDto::fromEntity)
+        .toList();
+    return new OrderResponseDto(
+        order.getId(),
+        order.getUser().getId(),
+        order.getCreatedAt(),
+        order.getStatus(),
+        orderItemsDto,
+        order.getTotal()
+    );
+  }
 }

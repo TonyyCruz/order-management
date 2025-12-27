@@ -1,6 +1,6 @@
 package com.anthony.blacksmithOnlineStore.enums;
 
-public enum Status {
+public enum OrderStatus {
   RECEIVED("Received"),
   PROCESSING("Processing"),
   PAYMENT_APPROVED("Payment Approved"),
@@ -17,11 +17,25 @@ public enum Status {
   DELIVERY_FAILED("Delivery Failed"),
   SUSPENDED("Suspended");
 
-  private final String name;
+  private final String status;
 
-  Status(String displayName) {
-    this.name = displayName;
+  OrderStatus(String status) {
+    this.status = status;
   }
 
-  
+  public String getStatus() {
+    return status;
+  }
+
+  public boolean isFinalState() {
+    return switch (this) {
+      case DELIVERED, CANCELLED, REFUNDED -> true;
+      default -> false;
+    };
+  }
+
+  @Override
+  public String toString() {
+    return status;
+  }
 }

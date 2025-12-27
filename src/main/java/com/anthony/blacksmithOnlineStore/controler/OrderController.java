@@ -1,7 +1,10 @@
 package com.anthony.blacksmithOnlineStore.controler;
 
+import com.anthony.blacksmithOnlineStore.controler.dto.Order.OrderRequestDto;
 import com.anthony.blacksmithOnlineStore.controler.dto.Order.OrderResponseDto;
 import com.anthony.blacksmithOnlineStore.entity.Order;
+import com.anthony.blacksmithOnlineStore.service.OrderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -11,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/orders")
 public class OrderController {
+  private final OrderService orderService;
 
   @PostMapping
   public ResponseEntity<OrderResponseDto> create(

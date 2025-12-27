@@ -137,6 +137,10 @@ Ou diretamente em sua IDE favorita.
 
 - Specifications para filtros dinâmicos em consultas (ex: busca de armas).
 
+- Embora o escopo de transação salve automaticamente, estou a usar o método save() para maior controle nos testes unitários.
+
+- Adicionei nome e ‘id’ do ferreiro em memória na entidade ‘item’ e mudei o fetch para lazy, deixando a consulta de itens mais performática.
+
 ---
 
 ## 📘 Exemplos de Endpoints
