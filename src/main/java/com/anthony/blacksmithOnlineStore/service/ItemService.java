@@ -10,8 +10,6 @@ import com.anthony.blacksmithOnlineStore.exceptions.ItemNotFoundException;
 import com.anthony.blacksmithOnlineStore.repository.ItemRepository;
 import com.anthony.blacksmithOnlineStore.repository.specification.ItemSpecifications;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +27,8 @@ public class ItemService {
     Item item = ItemRequestDto.toEntity(dto);
     Blacksmith blacksmith = blacksmithService.findById(dto.blacksmithId());
     item.setCraftedBy(blacksmith);
-    item.setBlacksmithName(blacksmith.getName());
+    item.setBlacksmithIdSnapshot(blacksmith.getId());
+    item.setBlacksmithNameSnapshot(blacksmith.getName());
     return itemRepository.save(item);
   }
 
@@ -49,9 +48,8 @@ public class ItemService {
     item.setRarity(dto.rarity());
     item.setActive(dto.active());
     item.setCraftedBy(blacksmith);
-    item.setBlacksmithId(dto.blacksmithId());
-    item.setBlacksmithName(blacksmith.getName());
-
+    item.setBlacksmithIdSnapshot(dto.blacksmithId());
+    item.setBlacksmithNameSnapshot(blacksmith.getName());
     return itemRepository.save(item);
   }
 
@@ -116,13 +114,13 @@ public class ItemService {
   }
 
   @Transactional
-  public void makeSale(Long itemId, int qty) {
+  public void performSale(Long itemId, int qty) {
     Item item = findById(itemId);
     item.addSoldQuantity(qty);
     decrementStock(itemId, qty);
   }
 
-  private void itemExistesVerifier(Long id) {
+  public void itemExistesVerifier(Long id) {
     if (!itemRepository.existsById(id)) throw new ItemNotFoundException(id);
   }
 

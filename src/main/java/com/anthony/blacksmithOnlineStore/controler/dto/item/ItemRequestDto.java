@@ -34,7 +34,6 @@ public record ItemRequestDto(
         .type(dto.type())
         .rarity(dto.rarity())
         .active(dto.active())
-        .blacksmithId(dto.blacksmithId())
         .build();
   }
 }
