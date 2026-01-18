@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.anthony.blacksmithOnlineStore.controler.dto.blacksmith.BlacksmithRequestDto;
+import com.anthony.blacksmithOnlineStore.controler.dto.blacksmith.BlacksmithResponseDto;
 import com.anthony.blacksmithOnlineStore.entity.Blacksmith;
 import com.anthony.blacksmithOnlineStore.helper.mocks.MockBlacksmith;
 import com.anthony.blacksmithOnlineStore.integration.helper.TestBase;
@@ -17,7 +18,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 @Tag("integration")
 @DisplayName("Integration test for Blacksmith controller")
@@ -39,10 +42,12 @@ public class BlacksmithControllerTest extends TestBase {
   class BlacksmithControllerHappyPath {
 
     private String adminToken;
+    private String userToken;
 
     @BeforeEach
     void setUp() throws Exception {
       adminToken = performLogin(adminLogin);
+      userToken = performLogin(userLogin);
     }
 
     @Test
@@ -78,6 +83,44 @@ public class BlacksmithControllerTest extends TestBase {
           .andExpect(jsonPath("$.ratingCount").value(blacksmith.getRatingCount()))
           .andExpect(jsonPath("$.ratingAverage").value(blacksmith.getRatingAverage()));
     }
+
+    @Test
+    @DisplayName("Can get blacksmith by ID successfully")
+    void findById_canGetBlacksmithByIdSuccessfully() throws Exception {
+      String findByIdUrl = BLACKSMITH_BASE_URL + "/" + blacksmith.getId();
+      mockMvc.perform(get(findByIdUrl)
+              .contentType(MediaType.APPLICATION_JSON)
+              .header("Authorization", userToken))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.name").value(blacksmith.getName()))
+          .andExpect(jsonPath("$.description").value(blacksmith.getDescription()))
+          .andExpect(jsonPath("$.ratingCount").value(blacksmith.getRatingCount()))
+          .andExpect(jsonPath("$.ratingAverage").value(blacksmith.getRatingAverage()));
+    }
+
+    @Test
+    @DisplayName("Can get all blacksmiths successfully")
+    void findAll_canGetAllBlacksmithsSuccessfully() throws Exception {
+      mockMvc.perform(get(BLACKSMITH_BASE_URL)
+              .contentType(MediaType.APPLICATION_JSON)
+              .header("Authorization", userToken))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.content").isArray())
+          .andExpect(jsonPath("$.content.length()").value(2));
+    }
+
+    @Test
+    @DisplayName("Can search blacksmiths by name successfully")
+    void findByName_canSearchBlacksmithsByNameSuccessfully() throws Exception {
+      String searchName = blacksmith.getName().substring(0, 3);
+      String searchUrl = BLACKSMITH_BASE_URL + "/search?name=" + searchName;
+      mockMvc.perform(get(searchUrl)
+              .contentType(MediaType.APPLICATION_JSON)
+              .header("Authorization", userToken))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.content").isArray())
+          .andExpect(jsonPath("$.content.length()").value(1));
+    }
   }
 
   @Nested
@@ -89,6 +132,30 @@ public class BlacksmithControllerTest extends TestBase {
     @BeforeEach
     void setUp() throws Exception {
       userToken = performLogin(userLogin);
+    }
+
+    @Test
+    @DisplayName("Cannot create blacksmith with user role")
+    void createBlacksmith_cannotCreateBlacksmithWithUserRole() throws Exception {
+      String valueAsString = objectMapper.writeValueAsString(MockBlacksmith.requestDto());
+      mockMvc.perform(post(BLACKSMITH_BASE_URL)
+              .header("Authorization", userToken)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(valueAsString))
+          .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Cannot update blacksmith with user role")
+    void updateBlacksmith_cannotUpdateBlacksmithWithUserRole() throws Exception {
+      var updateDto = new BlacksmithRequestDto("Updated Name", "Updated Description");
+      String valueAsString = objectMapper.writeValueAsString(updateDto);
+      String updateUrl = BLACKSMITH_BASE_URL + "/" + blacksmith.getId();
+      mockMvc.perform(put(updateUrl)
+              .header("Authorization", userToken)
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(valueAsString))
+          .andExpect(status().isForbidden());
     }
   }
 }

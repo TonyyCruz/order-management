@@ -20,13 +20,13 @@ VALUES
 INSERT INTO BLACKSMITHS (name, description, total_ratings_sum, rating_count, rating_average)
 VALUES
     (
-        'The Iron Anvil',
+        'Gimli o Marteleiro',
         'Expert blacksmith specializing in medieval weaponry.',
         45,
         10,
         4.5
     ), (
-        'Steel & Fire',
+        'Tyrion o Perdido',
         'Custom knives and blades forged with precision.',
         30,
         8,
